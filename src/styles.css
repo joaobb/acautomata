@@ -1,0 +1,27 @@
+html {
+  height: 100%;
+  width: 100%;
+}
+
+body,
+#root,
+.App {
+  min-height: 100vh;
+}
+
+.App {
+  font-family: sans-serif;
+  text-align: center;
+
+  background-color: #232b2b;
+}
+
+.builder__menu {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.builder__menu button {
+  width: 100%;
+}
