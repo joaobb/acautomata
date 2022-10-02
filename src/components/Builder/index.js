@@ -10,7 +10,7 @@ const nodeMenu = new G6.Menu({
   offsetX: 10,
   offsetY: 20,
   itemTypes: ["node"],
-  getContent(event, graph) {
+  getContent(event) {
     const isInicialState = event.item.getModel().isInitial;
     const isAcceptanceState = event.item.getModel().isAcceptance;
 
@@ -31,6 +31,7 @@ const nodeMenu = new G6.Menu({
   handleMenuClick(button, node, graph) {
     return {
       setAsInitial: (node, graph) => {
+        const isInitialAlready = node.getModel().isInitial;
         const currentInitialNode = graph.find(
           "node",
           (node) => node.getModel().isInitial
@@ -41,10 +42,15 @@ const nodeMenu = new G6.Menu({
             ...currentInitialNode.getModel(),
             isInitial: false,
           });
+
+          currentInitialNode.setState("isInitial", false);
         }
+
+        if (isInitialAlready) return;
 
         const nodeModel = node.getModel();
 
+        node.setState("isInitial", true);
         graph.updateItem(node, {
           ...nodeModel,
           isInitial: true,
@@ -96,31 +102,16 @@ const edgeMenu = new G6.Menu({
 });
 
 G6.registerNode(
-  ACCEPTANCE_STATE_NAME,
-  {
-    afterDraw(cfg, group) {
-      group.addShape("circle", {
-        attrs: {
-          r: cfg.size / 2 - 5,
-          stroke: "#5F95FF",
-        },
-        name: "circle-shape",
-      });
-    },
-  },
-  "circle"
-);
-
-G6.registerNode(
   "state-node",
   {
     // Response the states
     setState(name, value, item) {
       const group = item.getContainer();
-      const acceptanceRingId = "acceptance-ring";
       const size = item.getModel().size;
 
       if (name === "isAcceptance") {
+        const acceptanceRingId = "acceptance-ring";
+
         const acceptanceRing = group.findById(acceptanceRingId);
 
         if (value) {
@@ -143,7 +134,11 @@ G6.registerNode(
 
       if (name === "isInitial") {
         const initialArrowId = "initial-arrow";
+
+        const initialArrow = group.findById(initialArrowId);
+
         if (value) {
+          if (initialArrow) return;
           const radio = size / 2;
           const xPadding = -5;
           const arrowLineThickness = 3;
@@ -164,12 +159,11 @@ G6.registerNode(
               ],
               fill: "red",
             },
-            // must be assigned in G6 3.3 and later versions. it can be any value you want
             name: "polygon-shape",
             id: initialArrowId,
           });
         } else {
-          group.removeChild(group.findById(initialArrowId));
+          if (initialArrow) group.removeChild(initialArrow);
         }
       }
     },
@@ -177,6 +171,7 @@ G6.registerNode(
   "circle"
 );
 
+// TODO: Handle touch devices
 G6.registerBehavior("click-add-node", {
   getEvents() {
     return {
@@ -193,6 +188,7 @@ G6.registerBehavior("click-add-node", {
       y: ev.canvasY,
       id: `node-${graph.cfg.nodes.length + 1}`,
       label: `q${graph.cfg.nodes.length + 1}`,
+      type: "state-node",
     });
   },
 });
@@ -238,7 +234,7 @@ export default function AutomataBuilder() {
           type: "dagre",
           rankdir: "LR", // Direction: Left to right
           nodesep: 200, // PX between nodes
-          ranksep: 100, //
+          ranksep: 100,
           preventOverlap: true,
         },
         defaultNode: {
@@ -262,16 +258,6 @@ export default function AutomataBuilder() {
               d: 12,
               stroke: "red",
               fill: "red",
-            },
-          },
-          edgeStateStyles: {
-            hover: {
-              // the keyShape style
-              fill: "#d3adf7",
-              // the style for the shape with name 'node-label'
-              "node-label": {
-                fontSize: 15,
-              },
             },
           },
         },
