@@ -6,18 +6,19 @@ import {
 
 const baseAutomataData = {
   nodes: [
-    { id: "node-0", label: "q1", isInitial: true },
+    { id: "node-1", label: "q1", isInitial: true },
     {
-      id: "node-1",
+      id: "node-2",
       label: "q2",
       isAcceptance: true,
     },
   ],
   edges: [
-    { source: "node-0", target: "node-0", label: "0" },
-    { source: "node-0", target: "node-1", label: "1" },
+    { source: "node-1", target: "node-1", label: "0" },
     { source: "node-1", target: "node-1", label: "1" },
-    { source: "node-1", target: "node-0", label: "0" },
+    { source: "node-1", target: "node-2", label: "1" },
+    { source: "node-2", target: "node-2", label: "1" },
+    { source: "node-2", target: "node-1", label: "0" },
   ],
 };
 

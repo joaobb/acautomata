@@ -5,6 +5,7 @@ import {
   INITIAL_STATE_NAME,
 } from "../../enums/automata";
 import { baseAutomataData } from "./data";
+import { DFA } from "../../models/DFA";
 
 const nodeMenu = new G6.Menu({
   offsetX: 10,
@@ -219,8 +220,8 @@ export default function AutomataBuilder() {
     if (!graph) {
       graph = new G6.Graph({
         container: ref.current,
-        // width: 500,
-        height: 900,
+        width: window.innerWidth - 300,
+        height: window.innerHeight - 5,
         modes: {
           default: [
             { type: "drag-canvas" },
@@ -276,15 +277,7 @@ export default function AutomataBuilder() {
         return;
       }
 
-      const edges = graph.save().edges;
-      G6.Util.processParallelEdges(edges, 42);
-
-      graph.getEdges().forEach((edge, i) => {
-        graph.updateItem(edge, {
-          curveOffset: edges[i].curveOffset,
-          curvePosition: edges[i].curvePosition,
-        });
-      });
+      rebalanceGraph();
     });
 
     graph.data({
@@ -304,12 +297,60 @@ export default function AutomataBuilder() {
       if (nodeModel.isInitial) node.setState("isInitial", true);
       if (nodeModel.isAcceptance) node.setState("isAcceptance", true);
     });
+    rebalanceGraph();
   }, []);
+
+  function rebalanceGraph() {
+    const edges = graph.save().edges;
+    G6.Util.processParallelEdges(edges, 42);
+
+    graph.getEdges().forEach((edge, i) => {
+      graph.updateItem(edge, {
+        curveOffset: edges[i].curveOffset,
+        curvePosition: edges[i].curvePosition,
+      });
+    });
+  }
+
+  function getTransitionTable() {
+    const automata = new DFA(graph.save());
+
+    return automata.transitions;
+  }
+
+  function testWord(ev) {
+    ev.preventDefault();
+    const { testWord } = Object.fromEntries(new FormData(ev.target));
+    const automata = new DFA(graph.save());
+
+    return automata.testWord(testWord);
+  }
 
   return (
     <>
-      <div ref={ref}></div>
-      <button onClick={() => console.log(graph.save())}>Save</button>
+      <div ref={ref} className="sandbox__container"></div>
+
+      <aside className="sidebar">
+        <div className="sidebar__header">
+          <div>Automatah</div>
+        </div>
+
+        <div className="sidebar__content">
+          <button onClick={() => console.log(graph.save())}>Print graph</button>
+
+          <button onClick={() => console.log(getTransitionTable())}>
+            Print transition table
+          </button>
+
+          <form
+            onSubmit={(ev) => alert("Accepted: " + testWord(ev))}
+            className="test-form"
+          >
+            <input type="text" name="testWord" />
+            <button type="submit">Test</button>
+          </form>
+        </div>
+      </aside>
     </>
   );
 }
