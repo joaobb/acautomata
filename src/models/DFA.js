@@ -1,3 +1,5 @@
+import { LAMBDA_TRANSITION_LABEL } from "../enums/automata";
+
 class DFA {
   states = [];
   alphabet = [];
@@ -16,13 +18,43 @@ class DFA {
     this.acceptStates = acceptStates;
   }
 
-  testWord(word, currentStates = [{ state: this.initialState }], path = []) {
+  __getReachableStates(state, key) {
+    return [
+      ...(key ? this.transitions[state][key] : []),
+      ...(this.transitions[state][LAMBDA_TRANSITION_LABEL] ?? []),
+    ];
+  }
+
+  __getInitialPathStep() {
+    const reachableStates = this.__getReachableStates(this.initialState);
+    if (reachableStates.length) {
+      return [
+        [
+          {
+            key: LAMBDA_TRANSITION_LABEL,
+            states: this.__getReachableStates(this.initialState),
+          },
+        ],
+      ];
+    }
+
+    return [];
+  }
+
+  testWord(
+    word,
+    currentStates = [
+      { state: this.initialState },
+      ...this.__getReachableStates(this.initialState),
+    ],
+    path = this.__getInitialPathStep()
+  ) {
     if (!word?.length) {
       return {
         accepts: currentStates.some((state) => {
           return this.acceptStates.includes(state.state);
         }),
-        path,
+        path: path || [],
       };
     }
 
@@ -31,16 +63,16 @@ class DFA {
     const step = [];
 
     const nextStates = currentStates.reduce((nextStates, state) => {
+      const nextStepState = this.__getReachableStates(state.state, currentKey);
+
       step.push({
         key: currentKey,
-        states: this.transitions[state.state][currentKey],
+        states: nextStepState,
       });
 
-      return [
-        ...nextStates,
-        ...(this.transitions[state.state][currentKey] ?? []),
-      ];
+      return [...nextStates, ...(nextStepState ?? [])];
     }, []);
+
     path.push(step);
 
     return this.testWord(word.slice(1), nextStates, path);

@@ -333,9 +333,9 @@ export default function AutomataBuilder() {
 
     graphInstance.on("aftercreateedge", ({ edge }) => {
       const label = prompt("Transition", "ε");
-      graphInstance.updateItem(edge, { label });
 
-      if (hasDuplicatedEdge(edge)) {
+      graphInstance.updateItem(edge, { label });
+      if (!label || hasDuplicatedEdge(edge)) {
         setTimeout(() => {
           graphInstance.removeItem(edge);
         }, 0);

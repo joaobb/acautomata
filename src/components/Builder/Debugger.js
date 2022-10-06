@@ -13,11 +13,12 @@ function AutomataDebugger({ graph }) {
     setWord(String(testWord));
 
     const automata = new DFA(graph.save());
+
     setPath(automata.testWord(testWord).path);
   }
 
   function toggleActiveState(step, value) {
-    path[step].forEach((branch) => {
+    path[step]?.forEach((branch) => {
       branch.states.forEach((state) => {
         graph.setItemState(state.path, "active", value);
       });
@@ -34,9 +35,9 @@ function AutomataDebugger({ graph }) {
 
   return (
     <div>
-      <form onSubmit={(ev) => handleDebug(ev)} className="test-form">
-        <fieldset>
-          <legend>Debugger</legend>
+      <fieldset>
+        <legend>Debugger</legend>
+        <form onSubmit={(ev) => handleDebug(ev)} className="debug-form">
           <input
             type="text"
             name="testWord"
@@ -44,24 +45,23 @@ function AutomataDebugger({ graph }) {
             defaultValue="101"
           />
           <button type="submit">Debug</button>
-        </fieldset>
-      </form>
+        </form>
+        <div>
+          <p className="debug-word">
+            {word.split("").map((char, $index) => (
+              <span
+                key={`test-word-char-#${$index}=${char}`}
+                style={{ color: step === $index ? "red" : undefined }}
+              >
+                {char}
+              </span>
+            ))}
+          </p>
 
-      <div>
-        <p className="debug-word">
-          {word.split("").map((char, $index) => (
-            <span
-              key={`test-word-char-#${$index}=${char}`}
-              style={{ color: step === $index ? "red" : undefined }}
-            >
-              {char}
-            </span>
-          ))}
-        </p>
-
-        <button onClick={() => handleStep(-1)}>-</button>
-        <button onClick={() => handleStep(+1)}>+</button>
-      </div>
+          <button onClick={() => handleStep(-1)}>-</button>
+          <button onClick={() => handleStep(+1)}>+</button>
+        </div>
+      </fieldset>
     </div>
   );
 }
