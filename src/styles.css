@@ -65,6 +65,14 @@ body,
   padding: 0.5rem 0;
 }
 
-.test-form {
+.test-form fieldset {
   display: flex;
+}
+
+fieldset legend {
+  color: white;
+}
+
+.debug-word {
+  color: white;
 }

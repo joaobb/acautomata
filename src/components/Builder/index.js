@@ -1,11 +1,11 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import G6 from "@antv/g6";
-import {
-  ACCEPTANCE_STATE_NAME,
-  INITIAL_STATE_NAME,
-} from "../../enums/automata";
 import { baseAutomataData } from "./data";
 import { DFA } from "../../models/DFA";
+import AutomataDebugger from "./Debugger";
+import AutomataTester from "./Tester";
+
+const EDGE_STROKE_COLOR = "#ffb203";
 
 const nodeMenu = new G6.Menu({
   offsetX: 10,
@@ -194,9 +194,74 @@ G6.registerBehavior("click-add-node", {
   },
 });
 
+G6.registerEdge(
+  "actiavableEdge",
+  {
+    // Response the states change
+    setState(name, value, item) {
+      const group = item.getContainer();
+      const shape = group.get("children")[0]; // The order is determined by the ordering of been draw
+      if (name === "active") {
+        if (value) {
+          shape.attr("lineDash", [10]);
+          shape.attr("lineDashOffset", 100);
+          shape.attr("stroke", "red");
+
+          shape.animate(
+            {
+              lineDashOffset: 0,
+            },
+            {
+              repeat: true,
+              duration: 5 * 1000,
+            }
+          );
+        } else {
+          shape.attr("lineDash", undefined);
+          shape.attr("stroke", EDGE_STROKE_COLOR);
+        }
+      }
+    },
+  },
+  "quadratic"
+);
+
+G6.registerEdge(
+  "activableLoopEdge",
+  {
+    // Response the states change
+    setState(name, value, item) {
+      const group = item.getContainer();
+      const shape = group.get("children")[0]; // The order is determined by the ordering of been draw
+      if (name === "active") {
+        if (value) {
+          shape.attr("lineDash", [10]);
+          shape.attr("lineDashOffset", 100);
+          shape.attr("stroke", "red");
+
+          shape.animate(
+            {
+              lineDashOffset: 0,
+            },
+            {
+              repeat: true,
+              duration: 5 * 1000,
+            }
+          );
+        } else {
+          shape.attr("lineDash", undefined);
+          shape.attr("stroke", EDGE_STROKE_COLOR);
+        }
+      }
+    },
+  },
+  "loop"
+);
+
 export default function AutomataBuilder() {
   const ref = React.useRef(null);
-  let graph = null;
+  const [graph, setGraph] = useState(null);
+  let graphInstance = null;
 
   function hasDuplicatedEdge(edge) {
     const siblings = edge.getSource().getOutEdges();
@@ -217,8 +282,8 @@ export default function AutomataBuilder() {
   }
 
   useEffect(() => {
-    if (!graph) {
-      graph = new G6.Graph({
+    if (!graphInstance) {
+      graphInstance = new G6.Graph({
         container: ref.current,
         width: window.innerWidth - 300,
         height: window.innerHeight - 5,
@@ -243,7 +308,7 @@ export default function AutomataBuilder() {
           size: 42,
         },
         defaultEdge: {
-          type: "quadratic",
+          type: "actiavableEdge",
           labelCfg: {
             refY: 10,
             style: {
@@ -252,7 +317,7 @@ export default function AutomataBuilder() {
             },
           },
           style: {
-            stroke: "#ffb203",
+            stroke: EDGE_STROKE_COLOR,
             lineWidth: 3,
             endArrow: {
               path: G6.Arrow.triangle(6, 6, 12),
@@ -266,13 +331,13 @@ export default function AutomataBuilder() {
       });
     }
 
-    graph.on("aftercreateedge", ({ edge }) => {
+    graphInstance.on("aftercreateedge", ({ edge }) => {
       const label = prompt("Transition", "ε");
-      graph.updateItem(edge, { label });
+      graphInstance.updateItem(edge, { label });
 
       if (hasDuplicatedEdge(edge)) {
         setTimeout(() => {
-          graph.removeItem(edge);
+          graphInstance.removeItem(edge);
         }, 0);
         return;
       }
@@ -280,32 +345,49 @@ export default function AutomataBuilder() {
       rebalanceGraph();
     });
 
-    graph.data({
+    graphInstance.data({
       nodes: baseAutomataData.nodes,
       edges: baseAutomataData.edges.map((edge) => ({
         ...edge,
-        type: edge.source === edge.target ? "loop" : edge.type || "quadratic",
+        type:
+          edge.source === edge.target ? "loop" : "actiavableEdge" || edge.type,
       })),
     });
 
-    graph.render();
+    graphInstance.render();
 
     // Set node state for styling
-    graph.getNodes().forEach((node) => {
+    graphInstance.getNodes().forEach((node) => {
       const nodeModel = node.getModel();
 
       if (nodeModel.isInitial) node.setState("isInitial", true);
       if (nodeModel.isAcceptance) node.setState("isAcceptance", true);
     });
+
     rebalanceGraph();
+
+    window.onresize = handleWindowResize;
+
+    setGraph(graphInstance);
   }, []);
 
-  function rebalanceGraph() {
-    const edges = graph.save().edges;
-    G6.Util.processParallelEdges(edges, 42);
+  function handleWindowResize() {
+    graphInstance.changeSize(window.innerWidth - 300, window.innerHeight - 5);
+    graphInstance.fitCenter();
+  }
 
-    graph.getEdges().forEach((edge, i) => {
-      graph.updateItem(edge, {
+  function rebalanceGraph() {
+    const edges = graphInstance.save().edges;
+    G6.Util.processParallelEdges(
+      edges,
+      42,
+      "actiavableEdge",
+      undefined,
+      "activableLoopEdge"
+    );
+
+    graphInstance.getEdges().forEach((edge, i) => {
+      graphInstance.updateItem(edge, {
         curveOffset: edges[i].curveOffset,
         curvePosition: edges[i].curvePosition,
       });
@@ -316,14 +398,6 @@ export default function AutomataBuilder() {
     const automata = new DFA(graph.save());
 
     return automata.transitions;
-  }
-
-  function testWord(ev) {
-    ev.preventDefault();
-    const { testWord } = Object.fromEntries(new FormData(ev.target));
-    const automata = new DFA(graph.save());
-
-    return automata.testWord(testWord);
   }
 
   return (
@@ -342,13 +416,9 @@ export default function AutomataBuilder() {
             Print transition table
           </button>
 
-          <form
-            onSubmit={(ev) => alert("Accepted: " + testWord(ev))}
-            className="test-form"
-          >
-            <input type="text" name="testWord" />
-            <button type="submit">Test</button>
-          </form>
+          <AutomataTester graph={graph} />
+
+          <AutomataDebugger graph={graph} />
         </div>
       </aside>
     </>

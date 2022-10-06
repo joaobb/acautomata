@@ -16,20 +16,34 @@ class DFA {
     this.acceptStates = acceptStates;
   }
 
-  testWord(word, currentStates = [this.initialState]) {
+  testWord(word, currentStates = [{ state: this.initialState }], path = []) {
     if (!word?.length) {
-      return currentStates.some((state) => {
-        return this.acceptStates.includes(state);
-      });
+      return {
+        accepts: currentStates.some((state) => {
+          return this.acceptStates.includes(state.state);
+        }),
+        path,
+      };
     }
 
     const currentKey = word.slice(0, 1);
 
-    const nextStates = currentStates.reduce((nextStates, state) => {
-      return [...nextStates, ...(this.transitions[state][currentKey] ?? [])];
-    }, []);
+    const step = [];
 
-    return this.testWord(word.slice(1), nextStates);
+    const nextStates = currentStates.reduce((nextStates, state) => {
+      step.push({
+        key: currentKey,
+        states: this.transitions[state.state][currentKey],
+      });
+
+      return [
+        ...nextStates,
+        ...(this.transitions[state.state][currentKey] ?? []),
+      ];
+    }, []);
+    path.push(step);
+
+    return this.testWord(word.slice(1), nextStates, path);
   }
 
   __parseGraph(graph) {
@@ -68,7 +82,7 @@ class DFA {
       if (edge.source === nodeId) {
         if (!result[edge.label]) result[edge.label] = [];
 
-        result[edge.label].push(edge.target);
+        result[edge.label].push({ state: edge.target, path: edge.id });
       }
 
       return result;

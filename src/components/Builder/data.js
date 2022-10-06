@@ -14,11 +14,11 @@ const baseAutomataData = {
     },
   ],
   edges: [
-    { source: "node-1", target: "node-1", label: "0" },
-    { source: "node-1", target: "node-1", label: "1" },
-    { source: "node-1", target: "node-2", label: "1" },
-    { source: "node-2", target: "node-2", label: "1" },
-    { source: "node-2", target: "node-1", label: "0" },
+    { id: "edge-1-1-#0", source: "node-1", target: "node-1", label: "0" },
+    { id: "edge-1-1-#1", source: "node-1", target: "node-1", label: "1" },
+    { id: "edge-1-2-#1", source: "node-1", target: "node-2", label: "1" },
+    { id: "edge-2-2-#1", source: "node-2", target: "node-2", label: "1" },
+    { id: "edge-2-1-#0", source: "node-2", target: "node-1", label: "0" },
   ],
 };
 
