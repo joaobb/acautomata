@@ -1,5 +1,7 @@
 import React from "react";
 import { DFA } from "../../models/DFA";
+import BaseButton from '../Base/Button';
+import BaseInput from '../Base/Input';
 
 export default function AutomataTester({ graph }) {
   function testWord(ev) {
@@ -18,13 +20,13 @@ export default function AutomataTester({ graph }) {
     >
       <fieldset>
         <legend>Test</legend>
-        <input
+        <BaseInput
           type="text"
           name="testWord"
           placeholder="Word"
           defaultValue="101"
         />
-        <button type="submit">Test word</button>
+        <BaseButton type="submit">Test word</BaseButton>
       </fieldset>
     </form>
   );

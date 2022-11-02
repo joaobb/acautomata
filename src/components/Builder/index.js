@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from "react";
 import G6 from "@antv/g6";
+import { AntvG6Utils } from "../../utilts/AntvG6";
+import BaseButton from "../Base/Button";
 import { baseAutomataData } from "./data";
 import { DFA } from "../../models/DFA";
 import AutomataDebugger from "./Debugger";
@@ -405,16 +407,16 @@ export default function AutomataBuilder() {
       <div ref={ref} className="sandbox__container"></div>
 
       <aside className="sidebar">
-        <div className="sidebar__header">
-          <div>Automatah</div>
-        </div>
-
         <div className="sidebar__content">
-          <button onClick={() => console.log(graph.save())}>Print graph</button>
+          <BaseButton
+            onClick={() => console.log(AntvG6Utils.parseSave(graph.save()))}
+          >
+            Print graph
+          </BaseButton>
 
-          <button onClick={() => console.log(getTransitionTable())}>
+          <BaseButton onClick={() => console.log(getTransitionTable())}>
             Print transition table
-          </button>
+          </BaseButton>
 
           <AutomataTester graph={graph} />
 

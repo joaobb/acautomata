@@ -1,5 +1,7 @@
 import React, { useState } from "react";
 import { DFA } from "../../models/DFA";
+import BaseButton from "../Base/Button";
+import BaseInput from "../Base/Input";
 
 function AutomataDebugger({ graph }) {
   const [path, setPath] = useState([]);
@@ -35,16 +37,16 @@ function AutomataDebugger({ graph }) {
 
   return (
     <div>
-      <fieldset>
+      <fieldset className={'flex gap-2 flex-col'}>
         <legend>Debugger</legend>
-        <form onSubmit={(ev) => handleDebug(ev)} className="debug-form">
-          <input
+        <form onSubmit={(ev) => handleDebug(ev)} className="flex gap-4 debug-form">
+          <BaseInput
             type="text"
             name="testWord"
             placeholder="Word"
             defaultValue="101"
           />
-          <button type="submit">Debug</button>
+          <BaseButton type="submit">Debug</BaseButton>
         </form>
         <div>
           <p className="debug-word">
@@ -58,8 +60,10 @@ function AutomataDebugger({ graph }) {
             ))}
           </p>
 
-          <button onClick={() => handleStep(-1)}>-</button>
-          <button onClick={() => handleStep(+1)}>+</button>
+          <div className={"flex gap-4"}>
+            <BaseButton onClick={() => handleStep(-1)}>-</BaseButton>
+            <BaseButton onClick={() => handleStep(+1)}>+</BaseButton>
+          </div>
         </div>
       </fieldset>
     </div>
