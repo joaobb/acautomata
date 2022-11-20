@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import G6 from "@antv/g6";
 import { AntvG6Utils } from "../../utilts/AntvG6";
+import { loadGraph } from "../../utilts/loadGraph";
 import BaseButton from "../Base/Button";
 import { baseAutomataData } from "./data";
 import { DFA } from "../../models/DFA";
@@ -408,6 +409,7 @@ export default function AutomataBuilder() {
 
       <aside className="sidebar">
         <div className="sidebar__content">
+          <BaseButton onClick={() => loadGraph(graph)}>Load graph</BaseButton>
           <BaseButton
             onClick={() => console.log(AntvG6Utils.parseSave(graph.save()))}
           >
