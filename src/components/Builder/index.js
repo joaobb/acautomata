@@ -380,7 +380,8 @@ export default function AutomataBuilder() {
   }
 
   function rebalanceGraph() {
-    const edges = graphInstance.save().edges;
+    const currentGraph = graphInstance || graph;
+    const edges = currentGraph.save().edges;
     G6.Util.processParallelEdges(
       edges,
       42,
@@ -389,8 +390,8 @@ export default function AutomataBuilder() {
       "activableLoopEdge"
     );
 
-    graphInstance.getEdges().forEach((edge, i) => {
-      graphInstance.updateItem(edge, {
+    currentGraph.getEdges().forEach((edge, i) => {
+      currentGraph.updateItem(edge, {
         curveOffset: edges[i].curveOffset,
         curvePosition: edges[i].curvePosition,
       });
@@ -409,7 +410,14 @@ export default function AutomataBuilder() {
 
       <aside className="sidebar">
         <div className="sidebar__content">
-          <BaseButton onClick={() => loadGraph(graph)}>Load graph</BaseButton>
+          <BaseButton
+            onClick={() => {
+              loadGraph(graph);
+              rebalanceGraph();
+            }}
+          >
+            Load graph
+          </BaseButton>
           <BaseButton
             onClick={() => console.log(AntvG6Utils.parseSave(graph.save()))}
           >

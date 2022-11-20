@@ -14,7 +14,14 @@ function loadGraph(graphInstance) {
     });
 
     graphInstance.render();
-    graphInstance.refresh();
+
+    parsedPayload.nodes.forEach((node) => {
+      if (node.isInitial)
+        graphInstance.findById(node.id)?.setState("isInitial", true);
+
+      if (node.isAcceptance)
+        graphInstance.findById(node.id)?.setState("isAcceptance", true);
+    });
   } catch (err) {
     alert("Ops! Ocorreu um problema ao carregar o automato: " + err.message);
   }
