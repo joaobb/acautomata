@@ -404,12 +404,18 @@ export default function AutomataBuilder() {
     return automata.transitions;
   }
 
+  function clearAutomata() {
+    graph.data({ nodes: [], edges: [] });
+    graph.render();
+  }
+
   return (
     <>
       <div ref={ref} className="sandbox__container"></div>
 
       <aside className="sidebar">
         <div className="sidebar__content">
+          <BaseButton onClick={clearAutomata}>Clear</BaseButton>
           <BaseButton
             onClick={() => {
               loadGraph(graph);

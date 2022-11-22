@@ -1,6 +1,8 @@
 function loadGraph(graphInstance) {
   const payload = prompt("Graph");
 
+  if (!payload) return;
+
   try {
     const parsedPayload = JSON.parse(payload);
 
