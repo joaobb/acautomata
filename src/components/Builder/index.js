@@ -2,11 +2,11 @@ import React, { useEffect, useState } from "react";
 import G6 from "@antv/g6";
 import { AntvG6Utils } from "../../utilts/AntvG6";
 import { loadGraph } from "../../utilts/loadGraph";
-import BaseButton from "../Base/Button";
 import { baseAutomataData } from "./data";
 import { DFA } from "../../models/DFA";
 import AutomataDebugger from "./Debugger";
 import AutomataTester from "./Tester";
+import { Button } from "flowbite-react";
 
 const EDGE_STROKE_COLOR = "#ffb203";
 
@@ -411,34 +411,34 @@ export default function AutomataBuilder() {
 
   return (
     <>
-      <div ref={ref} className="sandbox__container"></div>
-
       <aside className="sidebar">
         <div className="sidebar__content">
-          <BaseButton onClick={clearAutomata}>Clear</BaseButton>
-          <BaseButton
+          <Button onClick={clearAutomata}>Clear</Button>
+          <Button
             onClick={() => {
               loadGraph(graph);
               rebalanceGraph();
             }}
           >
             Load graph
-          </BaseButton>
-          <BaseButton
+          </Button>
+          <Button
             onClick={() => console.log(AntvG6Utils.parseSave(graph.save()))}
           >
             Print graph
-          </BaseButton>
+          </Button>
 
-          <BaseButton onClick={() => console.log(getTransitionTable())}>
+          <Button onClick={() => console.log(getTransitionTable())}>
             Print transition table
-          </BaseButton>
+          </Button>
 
           <AutomataTester graph={graph} />
 
           <AutomataDebugger graph={graph} />
         </div>
       </aside>
+
+      <div ref={ref} className="sandbox__container"></div>
     </>
   );
 }

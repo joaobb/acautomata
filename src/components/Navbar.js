@@ -96,7 +96,9 @@ const Navbar = () => {
                             }
                           >
                             Olá,{" "}
-                            <span className={"font-medium"}>{auth.user}</span>
+                            <span className={"font-medium"}>
+                              {auth.user.email}
+                            </span>
                           </span>
                         </Menu.Item>
 

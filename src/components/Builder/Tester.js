@@ -1,7 +1,8 @@
 import React from "react";
 import { DFA } from "../../models/DFA";
-import BaseButton from '../Base/Button';
-import BaseInput from '../Base/Input';
+import BaseButton from "../Base/Button";
+import BaseInput from "../Base/Input";
+import { Button } from "flowbite-react";
 
 export default function AutomataTester({ graph }) {
   function testWord(ev) {
@@ -26,7 +27,7 @@ export default function AutomataTester({ graph }) {
           placeholder="Word"
           defaultValue="101"
         />
-        <BaseButton type="submit">Test word</BaseButton>
+        <Button type="submit">Test word</Button>
       </fieldset>
     </form>
   );

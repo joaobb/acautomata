@@ -1,3 +1,4 @@
+import ExercisesPage from "../pages/Exercises";
 import LoginPage from "../pages/Login";
 import SandboxPage from "../pages/Sandbox";
 
@@ -12,7 +13,7 @@ const routes = [
   },
   {
     path: "/exercises",
-    element: <div>exercises list</div>,
+    element: <ExercisesPage />,
     auth: true,
   },
 ];

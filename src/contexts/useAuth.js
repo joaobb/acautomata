@@ -1,4 +1,4 @@
-import { fakeAuthProvider } from '../service/auth';
+import { authProvider } from '../service/auth';
 
 let AuthContext = React.createContext(null);
 
@@ -6,14 +6,14 @@ function AuthProvider({ children }) {
   let [user, setUser] = React.useState(null);
 
   const signIn = (newUser, callback) => {
-    return fakeAuthProvider.signIn(() => {
+    return authProvider.signIn(() => {
       setUser(newUser);
       callback();
     });
   };
 
   const signOut = (callback) => {
-    return fakeAuthProvider.signOut(() => {
+    return authProvider.signOut(() => {
       setUser(null);
       callback();
     });

@@ -12,23 +12,21 @@ function LoginPage() {
 
   function handleSubmit(event) {
     event.preventDefault();
+    try {
+      const formData = new FormData(event.currentTarget);
+      const email = formData.get("email");
+      const password = formData.get("password");
 
-    const formData = new FormData(event.currentTarget);
-    const username = formData.get("email");
-
-    auth.login(username, () => {
-      // Send them back to the page they tried to visit when they were
-      // redirected to the login page. Use { replace: true } so we don't create
-      // another entry in the history stack for the login page.  This means that
-      // when they get to the protected page and click the back button, they
-      // won't end up back on the login page, which is also really nice for the
-      // user experience.
-      navigate(from, { replace: true });
-    });
+      auth.login({ email, password }, () => {
+        navigate(from, { replace: true });
+      });
+    } catch (err) {
+      console.error(err);
+    }
   }
 
   return (
-    <div className="flex min-h-full items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+    <div className="flex-grow bg-gray-400 flex min-h-full items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
       <div className="w-full max-w-md space-y-8">
         <div>
           <div className={"flex justify-center"}>

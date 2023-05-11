@@ -1,11 +1,11 @@
-import { Link, Outlet, Route, Routes, useNavigate } from "react-router-dom";
+import { Outlet, Route, Routes } from "react-router-dom";
 import Navbar from "../components/Navbar";
 
-import { AuthProvider, useAuth } from "../hooks/useAuth";
+import RequireAuth from "../components/Router/RequireAuth";
+
+import { AuthProvider } from "../hooks/useAuth";
 
 import NotFoundPage from "../pages/NotFound";
-
-import RequireAuth from "../components/Router/RequireAuth";
 
 import routes from "./routes";
 

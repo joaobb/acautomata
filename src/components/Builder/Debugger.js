@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { DFA } from "../../models/DFA";
-import BaseButton from "../Base/Button";
 import BaseInput from "../Base/Input";
+import { Button } from "flowbite-react";
 
 function AutomataDebugger({ graph }) {
   const [path, setPath] = useState([]);
@@ -46,7 +46,7 @@ function AutomataDebugger({ graph }) {
             placeholder="Word"
             defaultValue="101"
           />
-          <BaseButton type="submit">Debug</BaseButton>
+          <Button type="submit">Debug</Button>
         </form>
         <div>
           <p className="debug-word">
@@ -61,8 +61,8 @@ function AutomataDebugger({ graph }) {
           </p>
 
           <div className={"flex gap-4"}>
-            <BaseButton onClick={() => handleStep(-1)}>-</BaseButton>
-            <BaseButton onClick={() => handleStep(+1)}>+</BaseButton>
+            <Button onClick={() => handleStep(-1)}>-</Button>
+            <Button onClick={() => handleStep(+1)}>+</Button>
           </div>
         </div>
       </fieldset>
