@@ -9,7 +9,7 @@ import BaseLogo from "./Base/Logo";
 
 const navigation = [
   { name: "Sandbox", href: "/", current: true },
-  { name: "Exercícios", href: "/exercises", current: false },
+  { name: "Exercícios", href: "/exercises?solved=false", current: false },
 ];
 
 function classNames(...classes) {
@@ -32,7 +32,7 @@ const Navbar = () => {
             <div className="relative flex h-16 items-center justify-between">
               <div className="absolute inset-y-0 left-0 flex items-center sm:hidden">
                 {/* Mobile menu button*/}
-                <Disclosure.Button className="inline-flex items-center justify-center rounded-md p-2 text-gray-400 hover:bg-gray-700 hover:text-white focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white">
+                <Disclosure.Button className="inline-flex items-center justify-center rounded-md p-2 text-orange-400 hover:bg-orange-700 hover:text-white focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white">
                   <span className="sr-only">Open main menu</span>
                   {open ? (
                     <XMarkIcon className="block h-6 w-6" aria-hidden="true" />
@@ -43,8 +43,8 @@ const Navbar = () => {
               </div>
               <div className="flex flex-1 items-center justify-center sm:items-stretch sm:justify-start">
                 <div className="flex flex-shrink-0 items-center">
-                  <BaseLogo className="block h-fulltext-lg px-2 py-0 text-amber-100 lg:hidden" />
-                  <BaseLogo className="hidden h-full text-lg px-2 py-0 text-amber-100 lg:block" />
+                  <BaseLogo className="block h-fulltext-lg px-2 py-0 text-orange-500 lg:hidden" />
+                  <BaseLogo className="hidden h-full text-lg px-2 py-0 text-orange-500 lg:flex" />
                 </div>
                 <div className="hidden sm:ml-6 sm:block">
                   <div className="flex space-x-4">
@@ -55,8 +55,8 @@ const Navbar = () => {
                         className={(navData) =>
                           classNames(
                             navData.isActive
-                              ? "bg-gray-900 text-white"
-                              : "text-gray-300 hover:bg-gray-700 hover:text-white",
+                              ? "bg-orange-600 text-white"
+                              : "text-orange-300 hover:bg-gray-700 hover:text-white",
                             "px-3 py-2 rounded-md text-sm font-medium"
                           )
                         }
@@ -75,7 +75,7 @@ const Navbar = () => {
                     <div>
                       <Menu.Button className="flex rounded-full bg-gray-800 text-sm focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800">
                         <span className="sr-only">Open user menu</span>
-                        <UserCircleIcon className="h-8 w-8 rounded-full text-gray-200" />
+                        <UserCircleIcon className="h-8 w-8 rounded-full text-orange-500" />
                       </Menu.Button>
                     </div>
                     <Transition

@@ -5,11 +5,11 @@ const BaseLogo = ({ className, ...props }) => {
     <span
       {...props}
       className={twMerge(
-        "text-2xl font-bold text-center mx-auto rounded-full border border-gray-700 p-4",
+        "flex items-center text-2xl font-bold text-center mx-auto rounded-full border text-orange-600 border-orange-600 p-4 select-none",
         className
       )}
     >
-      q0
+      FAVA
     </span>
   );
 };

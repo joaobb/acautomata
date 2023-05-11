@@ -6,6 +6,8 @@ html,
 body {
   min-height: 100% !important;
   height: 100%;
+
+  background-color: #001233;
 }
 
 html {
