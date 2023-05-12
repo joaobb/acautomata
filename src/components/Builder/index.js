@@ -414,23 +414,27 @@ export default function AutomataBuilder() {
       <aside className="sidebar">
         <div className="sidebar__content">
           <Button onClick={clearAutomata}>Clear</Button>
-          <Button
-            onClick={() => {
-              loadGraph(graph);
-              rebalanceGraph();
-            }}
-          >
-            Load graph
-          </Button>
-          <Button
-            onClick={() => console.log(AntvG6Utils.parseSave(graph.save()))}
-          >
-            Print graph
-          </Button>
+          {false && (
+            <>
+              <Button
+                onClick={() => {
+                  loadGraph(graph);
+                  rebalanceGraph();
+                }}
+              >
+                Load graph
+              </Button>
+              <Button
+                onClick={() => console.log(AntvG6Utils.parseSave(graph.save()))}
+              >
+                Print graph
+              </Button>
 
-          <Button onClick={() => console.log(getTransitionTable())}>
-            Print transition table
-          </Button>
+              <Button onClick={() => console.log(getTransitionTable())}>
+                Print transition table
+              </Button>
+            </>
+          )}
 
           <AutomataTester graph={graph} />
 
