@@ -1,5 +1,6 @@
 import ExercisesPage from "../pages/Exercises";
 import LoginPage from "../pages/Login";
+import RegisterPage from '../pages/Register';
 import SandboxPage from "../pages/Sandbox";
 
 const routes = [
@@ -10,6 +11,10 @@ const routes = [
   {
     path: "/login",
     element: <LoginPage />,
+  },
+  {
+    path: "/register",
+    element: <RegisterPage />,
   },
   {
     path: "/exercises",

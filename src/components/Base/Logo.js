@@ -9,7 +9,7 @@ const BaseLogo = ({ className, ...props }) => {
         className
       )}
     >
-      q0
+      Fava
     </span>
   );
 };
