@@ -1,0 +1,4 @@
+.exercise__container .builder-sidebar__tabs > div:not(.builder-sidebar__tabs),
+.exercise__container .builder-sidebar__tabs > div:not(.builder-sidebar__tabs) > div {
+  height: 100%;
+}

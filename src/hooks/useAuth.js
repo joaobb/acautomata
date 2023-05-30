@@ -11,13 +11,18 @@ export const AuthProvider = ({ children }) => {
 
   // call this function when you want to authenticate the user
   const login = async (data) => {
-    const accessToken = await AuthService.login({
-      email: data.email,
-      password: data.password,
-    });
-    localStorage.setItem("access_token", accessToken);
-    setUser(data);
-    navigate("/exercises");
+    try {
+      const response = await AuthService.login({
+        email: data.email,
+        password: data.password,
+      });
+
+      localStorage.setItem("access_token", response.access_token);
+      setUser({ ...data, role: response.role });
+      navigate("/exercises");
+    } catch (error) {
+      throw error;
+    }
   };
 
   // call this function to sign out logged in user

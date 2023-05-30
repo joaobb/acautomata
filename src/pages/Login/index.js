@@ -1,3 +1,4 @@
+import toast from "react-hot-toast";
 import { useLocation, useNavigate } from "react-router-dom";
 import BaseInput from "../../components/Base/Input";
 import BaseLogo from "../../components/Base/Logo";
@@ -18,21 +19,23 @@ function LoginPage() {
       const password = formData.get("password");
 
       auth.login({ email, password }, () => {
+        toast.success("Entrando...");
         navigate(from, { replace: true });
       });
     } catch (err) {
+      toast.error("Falha ao realizar login");
       console.error(err);
     }
   }
 
   return (
-    <div className="flex-grow bg-gray-400 flex min-h-full items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
-      <div className="w-full max-w-md space-y-8">
+    <div className="flex-grow bg-gray-600 flex min-h-full items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+      <div className="w-full max-w-md space-y-8 bg-gray-700 p-10 rounded-lg">
         <div>
           <div className={"flex justify-center"}>
-            <BaseLogo />
+            <BaseLogo className={'text-amber-100 border-amber-100'}/>
           </div>
-          <h2 className="mt-6 text-center text-3xl font-bold tracking-tight text-gray-900">
+          <h2 className="mt-6 text-center text-3xl font-bold tracking-tight text-gray-100">
             Bem vindo de volta
           </h2>
         </div>

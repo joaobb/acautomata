@@ -1,12 +1,8 @@
-import React, { useEffect, useState } from "react";
 import G6 from "@antv/g6";
-import { AntvG6Utils } from "../../utilts/AntvG6";
-import { loadGraph } from "../../utilts/loadGraph";
-import { baseAutomataData } from "./data";
+import { Tabs } from "flowbite-react";
+import React, { useEffect } from "react";
 import { DFA } from "../../models/DFA";
-import AutomataDebugger from "./Debugger";
-import AutomataTester from "./Tester";
-import { Button } from "flowbite-react";
+import { AutomataUtilitiesSidebar } from "./UtilitiesSidebar";
 
 const EDGE_STROKE_COLOR = "#ffb203";
 
@@ -261,11 +257,16 @@ G6.registerEdge(
   "loop"
 );
 
-export default function AutomataBuilder() {
+export default function AutomataBuilder({
+  graph,
+  heightOffset,
+  hasHeader,
+  children,
+  onUpdateGraph,
+}) {
   const ref = React.useRef(null);
-  const [graph, setGraph] = useState(null);
+  // const [graph, setGraph] = useState(null);
   let graphInstance = null;
-
   function hasDuplicatedEdge(edge) {
     const siblings = edge.getSource().getOutEdges();
     const edgeModel = edge.getModel();
@@ -289,7 +290,7 @@ export default function AutomataBuilder() {
       graphInstance = new G6.Graph({
         container: ref.current,
         width: window.innerWidth - 300,
-        height: window.innerHeight - 5,
+        height: window.innerHeight - (heightOffset + 110),
         modes: {
           default: [
             { type: "drag-canvas" },
@@ -348,14 +349,14 @@ export default function AutomataBuilder() {
       rebalanceGraph();
     });
 
-    graphInstance.data({
-      nodes: baseAutomataData.nodes,
-      edges: baseAutomataData.edges.map((edge) => ({
-        ...edge,
-        type:
-          edge.source === edge.target ? "loop" : "actiavableEdge" || edge.type,
-      })),
-    });
+    // graphInstance.data({
+    //   nodes: baseAutomataData.nodes,
+    //   edges: baseAutomataData.edges.map((edge) => ({
+    //     ...edge,
+    //     type:
+    //       edge.source === edge.target ? "loop" : "actiavableEdge" || edge.type,
+    //   })),
+    // });
 
     graphInstance.render();
 
@@ -371,7 +372,7 @@ export default function AutomataBuilder() {
 
     window.onresize = handleWindowResize;
 
-    setGraph(graphInstance);
+    onUpdateGraph(graphInstance);
   }, []);
 
   function handleWindowResize() {
@@ -409,40 +410,55 @@ export default function AutomataBuilder() {
     graph.render();
   }
 
+  const showExtraButtons = false;
+
   return (
-    <>
-      <aside className="sidebar">
-        <div className="sidebar__content">
-          <Button onClick={clearAutomata}>Clear</Button>
-          {false && (
-            <>
-              <Button
-                onClick={() => {
-                  loadGraph(graph);
-                  rebalanceGraph();
-                }}
-              >
-                Load graph
-              </Button>
-              <Button
-                onClick={() => console.log(AntvG6Utils.parseSave(graph.save()))}
-              >
-                Print graph
-              </Button>
+    <div className={"grid grid-cols-10"}>
+      <div
+        ref={ref}
+        className={`sandbox__container col-span-7 2xl:col-span-8 bg-gray-700 ${
+          hasHeader ? "rounded-bl-lg" : "rounded-l-lg"
+        }`}
+      />
 
-              <Button onClick={() => console.log(getTransitionTable())}>
-                Print transition table
-              </Button>
-            </>
-          )}
+      <aside
+        className={`sidebar col-span-3 2xl:col-span-2 w-full overflow-hidden ${
+          hasHeader ? "rounded-br-lg" : "rounded-r-lg"
+        }`}
+      >
+        {children ? (
+          <Tabs.Group
+            style="underline"
+            className={"builder-sidebar__tabs bg-gray-800 w-full"}
+          >
+            {children}
+            <Tabs.Item title="Utilidades">
+              <AutomataUtilitiesSidebar
+                graph={graph}
+                showExtraButtons={showExtraButtons}
+                clearAutomata={clearAutomata}
+                rebalanceGraph={rebalanceGraph}
+                printTransitionTable={getTransitionTable}
+              />
+            </Tabs.Item>
+          </Tabs.Group>
+        ) : (
+          <div className={"bg-gray-800 w-full p-6"}>
+            <span className={"text-xl font-bold block mb-2 text-gray-100"}>
+              Utilitários
+            </span>
+            <hr className={"mb-6"} />
 
-          <AutomataTester graph={graph} />
-
-          <AutomataDebugger graph={graph} />
-        </div>
+            <AutomataUtilitiesSidebar
+              graph={graph}
+              showExtraButtons={showExtraButtons}
+              clearAutomata={clearAutomata}
+              rebalanceGraph={rebalanceGraph}
+              printTransitionTable={getTransitionTable}
+            />
+          </div>
+        )}
       </aside>
-
-      <div ref={ref} className="sandbox__container"></div>
-    </>
+    </div>
   );
 }

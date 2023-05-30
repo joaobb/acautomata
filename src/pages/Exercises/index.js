@@ -1,9 +1,12 @@
-import { MagnifyingGlassIcon } from "@heroicons/react/20/solid";
+import { MagnifyingGlassIcon, PlusIcon } from "@heroicons/react/20/solid";
 import { Button, Table, TextInput } from "flowbite-react";
 import { useQuery } from "react-query";
 import { Link, useSearchParams } from "react-router-dom";
+import { twMerge } from "tailwind-merge";
 import { BasePageContent } from "../../components/Base/PageContent";
 import { ExerciseRow } from "../../components/Exercises/Row";
+import { Roles, RolesId } from "../../enums/Roles";
+import { useAuth } from "../../hooks/useAuth";
 import { TestsService } from "../../service/tests.service";
 import "./index.css";
 
@@ -14,37 +17,88 @@ const ExercisesPage = () => {
     all: !solvedFilterQuery,
     solved: solvedFilterQuery === "solved",
     unsolved: solvedFilterQuery === "unsolved",
+    authored: solvedFilterQuery === "authored",
   };
+
+  const auth = useAuth();
 
   const solved = filter.solved ? true : filter.unsolved ? false : undefined;
 
-  const { data, isLoading } = useQuery(["exercises", solved], () =>
-    TestsService.fetchTests({ solved })
+  const { data, isLoading } = useQuery(
+    ["exercises", solved, filter.authored ? "authored" : null],
+    () =>
+      TestsService.fetchTests({
+        solved,
+        authored: filter.authored || undefined,
+      })
   );
   const tests = data?.tests || [];
+
+  const canCreateExercise = [
+    RolesId[Roles.admin],
+    RolesId[Roles.teacher],
+  ].includes(auth.user.role);
 
   return (
     <div className="exercises__container py-6 bg-gray-600 flex-grow">
       <BasePageContent>
         <main className="p-6 bg-gray-400 rounded-lg">
-          <header className={"flex justify-between mb-6"}>
-            <Button.Group>
-              <Button color={filter.all ? undefined : "gray"}>
-                <Link to="/exercises">Todos</Link>
-              </Button>
-              <Button color={filter.solved ? undefined : "gray"}>
-                <Link to="/exercises?filter=solved">Não resolvidos</Link>
-              </Button>
-              <Button color={filter.unsolved ? undefined : "gray"}>
-                <Link to="/exercises?filter=unsolved">Resolvidos</Link>
-              </Button>
-            </Button.Group>
+          <header className={"flex gap-4 mb-6"}>
+            <div className={"flex"}>
+              <Link to="/exercises">
+                <Button
+                  className="rounded-r-none"
+                  color={filter.all ? undefined : "dark"}
+                >
+                  Todos
+                </Button>
+              </Link>
+              <Link to="/exercises?filter=unsolved">
+                <Button
+                  className="rounded-none"
+                  color={filter.unsolved ? undefined : "dark"}
+                >
+                  Não resolvidos
+                </Button>
+              </Link>
+              <Link to="/exercises?filter=solved">
+                <Button
+                  className={twMerge(
+                    ["rounded-none"],
+                    [!canCreateExercise ? "rounded-r-lg" : null]
+                  )}
+                  color={filter.solved ? undefined : "dark"}
+                >
+                  Resolvidos
+                </Button>
+              </Link>
+              {canCreateExercise ? (
+                <Link to="/exercises?filter=authored">
+                  <Button
+                    className="rounded-l-none"
+                    color={filter.authored ? undefined : "dark"}
+                  >
+                    Minhas criações
+                  </Button>
+                </Link>
+              ) : null}
+            </div>
+            {canCreateExercise ? (
+              <Link to={"/exercises/new"}>
+                <Button pill={true} color={"light"} className={"font-bold"}>
+                  <PlusIcon
+                    className={"w-5 h-5 inline text-gray-100 stroke-2"}
+                  />
+                  Novo
+                </Button>
+              </Link>
+            ) : null}
 
-            <form className={"flex"}>
+            <form className={"flex ml-auto"}>
               <TextInput id="search" type="search" placeholder="Buscar" />
-              <Button color="gray">
+              <Button color="dark">
                 <MagnifyingGlassIcon
-                  className={"w-5 h-5 inline text-gray-700"}
+                  className={"w-5 h-5 inline text-gray-100"}
                 />
               </Button>
             </form>

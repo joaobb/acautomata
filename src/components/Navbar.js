@@ -1,10 +1,10 @@
 import { UserCircleIcon } from "@heroicons/react/24/solid";
+import { Button } from "flowbite-react";
 import { Fragment } from "react";
 import { Disclosure, Menu, Transition } from "@headlessui/react";
 import { Bars3Icon, XMarkIcon } from "@heroicons/react/24/outline";
 import { Link, NavLink, useNavigate } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth";
-import BaseButton from "./Base/Button";
 import BaseLogo from "./Base/Logo";
 
 const navigation = [
@@ -132,18 +132,16 @@ const Navbar = () => {
                     </Transition>
                   </Menu>
                 ) : (
-                  <div>
-                    <BaseButton
-                      variant={"text"}
-                      as={Link}
-                      to={"/login"}
-                      className={"mr-4"}
-                    >
-                      Entrar
-                    </BaseButton>
-                    <BaseButton variant={"outline"} as={Link} to={"/register"}>
-                      Cadastrar-se
-                    </BaseButton>
+                  <div className={"flex gap-2"}>
+                    <Link to={"/login"}>
+                      <Button color={"light"} className={"mr-4"}>
+                        Entrar
+                      </Button>
+                    </Link>
+
+                    <Link to={"/register"}>
+                      <Button variant={"outline"}>Cadastrar-se</Button>
+                    </Link>
                   </div>
                 )}
               </div>

@@ -1,3 +1,4 @@
+import PlayIcon from "@heroicons/react/24/outline/PlayIcon";
 import React, { useState } from "react";
 import { DFA } from "../../models/DFA";
 import BaseInput from "../Base/Input";
@@ -37,16 +38,21 @@ function AutomataDebugger({ graph }) {
 
   return (
     <div>
-      <fieldset className={'flex gap-2 flex-col'}>
-        <legend>Debugger</legend>
-        <form onSubmit={(ev) => handleDebug(ev)} className="flex gap-4 debug-form">
+      <fieldset className={"flex gap-2 flex-col"}>
+        <legend className={"font-bold"}>Passo-a-passo</legend>
+        <form
+          onSubmit={(ev) => handleDebug(ev)}
+          className="flex gap-2 debug-form"
+        >
           <BaseInput
             type="text"
             name="testWord"
             placeholder="Word"
             defaultValue="101"
           />
-          <Button type="submit">Debug</Button>
+          <Button type="submit">
+            <PlayIcon className={"w-5 h-5 inline text-white stroke-2"} />
+          </Button>
         </form>
         <div>
           <p className="debug-word">
@@ -60,9 +66,17 @@ function AutomataDebugger({ graph }) {
             ))}
           </p>
 
-          <div className={"flex gap-4"}>
-            <Button onClick={() => handleStep(-1)}>-</Button>
-            <Button onClick={() => handleStep(+1)}>+</Button>
+          <div className={"flex"}>
+            <Button onClick={() => handleStep(-1)} className={"rounded-r-none"}>
+              <PlayIcon
+                className={
+                  "w-5 h-5 transform rotate-180 inline text-white stroke-2"
+                }
+              />
+            </Button>
+            <Button onClick={() => handleStep(+1)} className={"rounded-l-none"}>
+              <PlayIcon className={"w-5 h-5 inline text-white stroke-2"} />
+            </Button>
           </div>
         </div>
       </fieldset>

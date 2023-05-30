@@ -1,4 +1,4 @@
-import { Table } from "flowbite-react";
+import { Button, Table } from "flowbite-react";
 import {
   CheckCircleIcon,
   MinusCircleIcon,
@@ -16,7 +16,7 @@ export const ExerciseRow = ({ testId, name, author, grade = null }) => {
       />
     ),
     null: (
-      <MinusCircleIcon className="w-8 h-8 text-gray-300" title="Por fazer" />
+      <MinusCircleIcon className="w-8 h-8 inline text-gray-300" title="Por fazer" />
     ),
   }[grade];
 
@@ -27,13 +27,12 @@ export const ExerciseRow = ({ testId, name, author, grade = null }) => {
       </Table.Cell>
       {/*<Table.Cell>{description}</Table.Cell>*/}
       <Table.Cell>{author || "-"}</Table.Cell>
-      <Table.Cell>{gradeIcon}</Table.Cell>
+      <Table.Cell className={'text-center'}>{gradeIcon}</Table.Cell>
       <Table.Cell>
-        <Link
-          to={`/exercises/${testId}`}
-          className="font-medium text-blue-600 hover:underline dark:text-blue-500"
-        >
-          Ver
+        <Link to={`/exercises/${testId}`}>
+          <Button color={"light"} className={"mx-auto"}>
+            Resolver
+          </Button>
         </Link>
       </Table.Cell>
     </Table.Row>

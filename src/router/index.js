@@ -30,7 +30,9 @@ const Router = () => {
               key={route.path}
               element={
                 route.auth ? (
-                  <RequireAuth>{route.element}</RequireAuth>
+                  <RequireAuth roleLevel={route.roleLevel}>
+                    {route.element}
+                  </RequireAuth>
                 ) : (
                   route.element
                 )

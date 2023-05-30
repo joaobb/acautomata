@@ -1,9 +1,3 @@
-import G6 from "@antv/g6";
-import {
-  ACCEPTANCE_STATE_NAME,
-  INITIAL_STATE_NAME,
-} from "../../enums/automata";
-
 const baseAutomataData = {
   nodes: [
     { id: "node-1", label: "q1", isInitial: true },

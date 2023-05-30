@@ -1,4 +1,4 @@
-import { LAMBDA_TRANSITION_LABEL } from "../enums/automata";
+import { LAMBDA_TRANSITION_LABEL } from "../enums/Automata";
 
 class DFA {
   states = [];
