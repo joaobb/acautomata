@@ -1,15 +1,22 @@
-import { Checkbox, Label } from "flowbite-react";
+import { Button, Checkbox, Label } from "flowbite-react";
+import { useState } from "react";
+import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
+import { twMerge } from "tailwind-merge";
 import Input from "../../components/Base/Input";
 import BaseLogo from "../../components/Base/Logo";
 import { AuthService } from "../../service/auth.service";
 
 function RegisterPage() {
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
   let navigate = useNavigate();
 
   async function handleSubmit(event) {
     event.preventDefault();
     try {
+      setIsSubmitting(true);
+
       const formData = new FormData(event.currentTarget);
       const userName = formData.get("userName");
       const email = formData.get("email");
@@ -23,8 +30,13 @@ function RegisterPage() {
         role: isTeacher ? "teacher" : "student",
       });
 
-      navigate("/login");
+      toast.success("Cadastro realizado!");
+      navigate("/login", { state: { email } });
     } catch (err) {
+      setIsSubmitting(false);
+
+      toast.error("Ops! Falha ao criar conta");
+
       console.error(err);
     }
   }
@@ -51,9 +63,9 @@ function RegisterPage() {
           <input type="hidden" name="remember" defaultValue="true" />
           <div className="flex flex-col gap-4 -space-y-px rounded-md shadow-sm">
             <div>
-              <label htmlFor="userName" className="sr-only">
+              <Label htmlFor="userName" className="sr-only">
                 Nome
-              </label>
+              </Label>
               <Input
                 id="userName"
                 name="userName"
@@ -65,9 +77,9 @@ function RegisterPage() {
             </div>
 
             <div>
-              <label htmlFor="email-address" className="sr-only">
+              <Label htmlFor="email-address" className="sr-only">
                 Email
-              </label>
+              </Label>
 
               <Input
                 id="email-address"
@@ -80,9 +92,9 @@ function RegisterPage() {
             </div>
 
             <div>
-              <label htmlFor="password" className="sr-only">
+              <Label htmlFor="password" className="sr-only">
                 Senha
-              </label>
+              </Label>
               <Input
                 id="password"
                 name="password"
@@ -100,13 +112,16 @@ function RegisterPage() {
           </div>
 
           <div>
-            <button
+            <Button
               type="submit"
-              className="group relative flex w-full justify-center rounded-md border border-transparent bg-indigo-600 py-2 px-4 text-sm font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+              className={twMerge(
+                "w-full",
+                isSubmitting ? "animate-pulse" : null
+              )}
+              disabled={isSubmitting}
             >
-              <span className="absolute inset-y-0 left-0 flex items-center pl-3"></span>
-              Cadastrar-se
-            </button>
+              <span className={"relative"}>Cadastrar-se</span>
+            </Button>
           </div>
         </form>
       </div>

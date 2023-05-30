@@ -1,29 +1,41 @@
+import { Button, Label } from "flowbite-react";
+import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { useLocation, useNavigate } from "react-router-dom";
+import { twMerge } from "tailwind-merge";
 import BaseInput from "../../components/Base/Input";
 import BaseLogo from "../../components/Base/Logo";
 import { useAuth } from "../../hooks/useAuth";
 
 function LoginPage() {
+  const [isSubmitting, setIsSubmitting] = useState(false);
   let navigate = useNavigate();
   let location = useLocation();
   let auth = useAuth();
 
+  const registeredEmail = location.state?.email;
+
+  useEffect(() => {
+    navigate(location.pathname, { replace: true });
+  }, []);
+
   let from = location.state?.from?.pathname || "/";
 
-  function handleSubmit(event) {
+  async function handleSubmit(event) {
     event.preventDefault();
     try {
+      setIsSubmitting(true);
+
       const formData = new FormData(event.currentTarget);
       const email = formData.get("email");
       const password = formData.get("password");
 
-      auth.login({ email, password }, () => {
-        toast.success("Entrando...");
-        navigate(from, { replace: true });
-      });
+      await auth.login({ email, password });
+      toast.success("Entrando...");
+      navigate(from, { replace: true });
     } catch (err) {
-      toast.error("Falha ao realizar login");
+      setIsSubmitting(false);
+      toast.error("Ops! Falha ao realizar login");
       console.error(err);
     }
   }
@@ -33,7 +45,7 @@ function LoginPage() {
       <div className="w-full max-w-md space-y-8 bg-gray-700 p-10 rounded-lg">
         <div>
           <div className={"flex justify-center"}>
-            <BaseLogo className={'text-amber-100 border-amber-100'}/>
+            <BaseLogo className={"text-amber-100 border-amber-100"} />
           </div>
           <h2 className="mt-6 text-center text-3xl font-bold tracking-tight text-gray-100">
             Bem vindo de volta
@@ -44,11 +56,12 @@ function LoginPage() {
           <input type="hidden" name="remember" defaultValue="true" />
           <div className="flex flex-col gap-4 -space-y-px rounded-md shadow-sm">
             <div>
-              <label htmlFor="email-address" className="sr-only">
+              <Label htmlFor="email-address" className="sr-only">
                 Email
-              </label>
+              </Label>
 
               <BaseInput
+                defaultValue={registeredEmail}
                 id="email-address"
                 name="email"
                 type="email"
@@ -59,9 +72,9 @@ function LoginPage() {
             </div>
 
             <div>
-              <label htmlFor="password" className="sr-only">
+              <Label htmlFor="password" className="sr-only">
                 Senha
-              </label>
+              </Label>
               <BaseInput
                 id="password"
                 name="password"
@@ -86,18 +99,16 @@ function LoginPage() {
           {/*</div>*/}
 
           <div>
-            <button
+            <Button
               type="submit"
-              className="group relative flex w-full justify-center rounded-md border border-transparent bg-indigo-600 py-2 px-4 text-sm font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+              className={twMerge(
+                "w-full",
+                isSubmitting ? "animate-pulse" : null
+              )}
+              disabled={isSubmitting}
             >
-              <span className="absolute inset-y-0 left-0 flex items-center pl-3">
-                {/*<LockClosedIcon*/}
-                {/*  className="h-5 w-5 text-indigo-500 group-hover:text-indigo-400"*/}
-                {/*  aria-hidden="true"*/}
-                {/*/>*/}
-              </span>
-              Entrar
-            </button>
+              <span className={"relative"}>Entrar</span>
+            </Button>
           </div>
         </form>
       </div>
