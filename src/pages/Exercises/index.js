@@ -14,14 +14,16 @@ import "./index.css";
 
 const ExercisesPage = () => {
   const [page, setPage] = useState(0);
+  const [nameFilter, setNameFilter] = useState("");
 
   const [searchParams] = useSearchParams();
-  const solvedFilterQuery = searchParams.get("filter");
+  const filterQuery = searchParams.get("filter");
+
   const filter = {
-    all: !solvedFilterQuery,
-    solved: solvedFilterQuery === "solved",
-    unsolved: solvedFilterQuery === "unsolved",
-    authored: solvedFilterQuery === "authored",
+    all: !filterQuery,
+    solved: filterQuery === "solved",
+    unsolved: filterQuery === "unsolved",
+    authored: filterQuery === "authored",
   };
 
   const auth = useAuth();
@@ -30,13 +32,20 @@ const ExercisesPage = () => {
 
   const { data, isLoading } = useQuery({
     keepPreviousData: true,
-    queryKey: ["exercises", page, solved, filter.authored ? "authored" : null],
+    queryKey: [
+      "exercises",
+      page,
+      solved,
+      filter.authored ? "authored" : null,
+      nameFilter,
+    ],
     queryFn: () =>
       TestsService.fetchTests({
         solved,
         authored: filter.authored || undefined,
         pageSize: PAGINATION_PAGE_SIZE,
         page,
+        name: nameFilter,
       }),
   });
 
@@ -50,6 +59,11 @@ const ExercisesPage = () => {
     RolesId[Roles.admin],
     RolesId[Roles.teacher],
   ].includes(auth.user.role);
+
+  function onFilterByName(ev) {
+    ev.preventDefault();
+    setNameFilter(ev.target.elements?.searchQuery?.value);
+  }
 
   return (
     <div className="exercises__container py-6 bg-gray-600 flex-grow">
@@ -106,9 +120,14 @@ const ExercisesPage = () => {
               </Link>
             ) : null}
 
-            <form className={"flex ml-auto"}>
-              <TextInput id="search" type="search" placeholder="Buscar" />
-              <Button color="dark">
+            <form className={"flex ml-auto"} onSubmit={onFilterByName}>
+              <TextInput
+                id="search"
+                type="search"
+                name={"searchQuery"}
+                placeholder="Buscar"
+              />
+              <Button color="dark" type={"submit"}>
                 <MagnifyingGlassIcon
                   className={"w-5 h-5 inline text-gray-100"}
                 />
