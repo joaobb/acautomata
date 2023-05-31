@@ -23,6 +23,7 @@ function LoginPage() {
 
   async function handleSubmit(event) {
     event.preventDefault();
+    const toastId = toast.loading("Entrando...");
     try {
       setIsSubmitting(true);
 
@@ -31,11 +32,11 @@ function LoginPage() {
       const password = formData.get("password");
 
       await auth.login({ email, password });
-      toast.success("Entrando...");
+      toast.success("Bem vindo novamente!", { id: toastId });
       navigate(from, { replace: true });
     } catch (err) {
       setIsSubmitting(false);
-      toast.error("Ops! Falha ao realizar login");
+      toast.error("Ops! Falha ao realizar login", { id: toastId });
       console.error(err);
     }
   }

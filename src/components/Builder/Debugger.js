@@ -1,84 +1,192 @@
+import { CheckIcon, XCircleIcon, XMarkIcon } from "@heroicons/react/24/outline";
 import PlayIcon from "@heroicons/react/24/outline/PlayIcon";
 import React, { useState } from "react";
-import { DFA } from "../../models/DFA";
+import toast from "react-hot-toast";
+import { LAMBDA_TRANSITION_LABEL } from "../../enums/Automata";
 import BaseInput from "../Base/Input";
 import { Button } from "flowbite-react";
 
+import { Automata, parseGraphToAutomata } from "automata-logics-v2";
+
 function AutomataDebugger({ graph }) {
-  const [path, setPath] = useState([]);
+  const [wordTestResult, setWordTestResult] = useState({
+    accepts: false,
+    path: [],
+  });
+
   const [word, setWord] = useState("");
   const [step, setStep] = useState(0);
+
+  const [debugMode, setDebugMode] = useState(false);
 
   function handleDebug(ev) {
     ev.preventDefault();
 
     const { testWord } = Object.fromEntries(new FormData(ev.target));
-    setWord(String(testWord));
 
-    const automata = new DFA(graph.save());
+    if (typeof testWord !== "string") return;
 
-    setPath(automata.testWord(testWord).path);
+    const parsedAutomata = parseGraphToAutomata(graph.save());
+
+    const automata = new Automata(
+      parsedAutomata.states,
+      parsedAutomata.alphabet,
+      parsedAutomata.transitions,
+      parsedAutomata.initialState,
+      parsedAutomata.acceptanceStates
+    );
+
+    const wordTest = automata.testWord(testWord);
+
+    const parsedPath = wordTest.path.reduce((result, step, index) => {
+      const stepTransitions = step
+        .map((transition) => transition.id)
+        .filter(Boolean);
+
+      if (stepTransitions.filter(Boolean).length) {
+        result.push({
+          key: !index ? LAMBDA_TRANSITION_LABEL : testWord[index - 1],
+          transitions: stepTransitions,
+        });
+      }
+      return result;
+    }, []);
+
+    setWordTestResult({ accepts: wordTest.accepts, path: parsedPath });
+
+    setWord(testWord);
+
+    parsedPath[0]?.transitions.forEach((transition) =>
+      graph.setItemState(transition, "active", true)
+    );
+
+    setDebugMode(true);
+  }
+
+  function clearDebugger() {
+    setDebugMode(false);
+    graph.save()?.edges.forEach((edge) => {
+      graph.setItemState(edge.id, "active", false);
+    });
+    setWord("");
+    setStep(0);
+    setWordTestResult({ accepts: false, path: [] });
   }
 
   function toggleActiveState(step, value) {
-    path[step]?.forEach((branch) => {
-      branch.states.forEach((state) => {
-        graph.setItemState(state.path, "active", value);
-      });
+    wordTestResult.path[step]?.transitions.forEach((transition) => {
+      if (transition) graph.setItemState(transition, "active", value);
     });
   }
 
   function handleStep(diff) {
-    const newStep = Math.max(Math.min(step + diff, word.length - 1), 0);
-
     toggleActiveState(step, false);
-    setStep(newStep);
-    toggleActiveState(newStep, true);
+
+    const nextStep = Math.max(Math.min(step + diff, word.length - 1), 0);
+    setStep(nextStep);
+    toggleActiveState(nextStep, true);
+
+    if (nextStep === word.length - 1) {
+      if (wordTestResult.accepts)
+        toast.success("O automato reconhece a palavra");
+      else toast.error("O automato não reconhece a palavra");
+    }
   }
+
+  const isFirstStep = step === 0;
+  const isLastStep = step === word.length - 1;
 
   return (
     <div>
       <fieldset className={"flex gap-2 flex-col"}>
         <legend className={"font-bold"}>Passo-a-passo</legend>
-        <form
-          onSubmit={(ev) => handleDebug(ev)}
-          className="flex gap-2 debug-form"
-        >
-          <BaseInput
-            type="text"
-            name="testWord"
-            placeholder="Word"
-            defaultValue="101"
-          />
-          <Button type="submit">
-            <PlayIcon className={"w-5 h-5 inline text-white stroke-2"} />
-          </Button>
-        </form>
-        <div>
-          <p className="debug-word">
-            {word.split("").map((char, $index) => (
-              <span
-                key={`test-word-char-#${$index}=${char}`}
-                style={{ color: step === $index ? "red" : undefined }}
-              >
-                {char}
-              </span>
-            ))}
-          </p>
+        {!debugMode ? (
+          <form
+            onSubmit={(ev) => handleDebug(ev)}
+            className="flex gap-2 debug-form"
+          >
+            <BaseInput
+              type="text"
+              name="testWord"
+              placeholder="Palavra"
+              defaultValue="101"
+              onInput={clearDebugger}
+            />
+            <Button type="submit" className={"text-white"}>
+              <PlayIcon className={"w-5 h-5 inline stroke-2"} />
+            </Button>
+          </form>
+        ) : (
+          <div className={"flex flex-col"}>
+            <div className={"flex bg-white rounded-t-lg"}>
+              <p className="debug-word text-gray-800 px-4 py-2">
+                {word.split("").map((char, $index) => (
+                  <span
+                    key={`test-word-char-#${$index}=${char}`}
+                    className={
+                      step === $index
+                        ? "text-red-700 font-bold"
+                        : "text-gray-800"
+                    }
+                  >
+                    {char}
+                  </span>
+                ))}
+              </p>
 
-          <div className={"flex"}>
-            <Button onClick={() => handleStep(-1)} className={"rounded-r-none"}>
-              <PlayIcon
+              <Button
+                color={"dark"}
+                onClick={clearDebugger}
+                className={"rounded-none rounded-tr-lg ml-auto text-white"}
+              >
+                <XCircleIcon
+                  className={"w-5 h-5 transform rotate-180 stroke-2"}
+                />
+              </Button>
+            </div>
+
+            <div className={"flex w-full"}>
+              <Button
+                disabled={isFirstStep}
+                onClick={() => handleStep(-1)}
                 className={
-                  "w-5 h-5 transform rotate-180 inline text-white stroke-2"
+                  "flex-grow rounded-t-none rounded-br-none text-white"
                 }
-              />
-            </Button>
-            <Button onClick={() => handleStep(+1)} className={"rounded-l-none"}>
-              <PlayIcon className={"w-5 h-5 inline text-white stroke-2"} />
-            </Button>
+              >
+                <PlayIcon className={"w-5 h-5 transform rotate-180 stroke-2"} />
+              </Button>
+
+              {!isLastStep ? (
+                <Button
+                  onClick={() => handleStep(+1)}
+                  className={
+                    "flex-grow rounded-t-none rounded-bl-none text-white"
+                  }
+                >
+                  {!isLastStep ? (
+                    <PlayIcon className={"w-5 h-5 stroke-2"} />
+                  ) : (
+                    <CheckIcon className={"w-5 h-5 stroke-2"} />
+                  )}
+                </Button>
+              ) : (
+                <Button
+                  disabled
+                  color={wordTestResult.accepts ? "success" : "failure"}
+                  className={
+                    "flex-grow rounded-t-none rounded-bl-none text-white"
+                  }
+                >
+                  {wordTestResult.accepts ? (
+                    <CheckIcon className={"w-5 h-5 stroke-2"} />
+                  ) : (
+                    <XMarkIcon className={"w-5 h-5 stroke-2"} />
+                  )}
+                </Button>
+              )}
+            </div>
           </div>
-        </div>
+        )}
       </fieldset>
     </div>
   );

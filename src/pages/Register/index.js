@@ -14,6 +14,8 @@ function RegisterPage() {
 
   async function handleSubmit(event) {
     event.preventDefault();
+    const toastId = toast.loading("Aguarde, cadastrando conta...");
+
     try {
       setIsSubmitting(true);
 
@@ -30,12 +32,12 @@ function RegisterPage() {
         role: isTeacher ? "teacher" : "student",
       });
 
-      toast.success("Cadastro realizado!");
+      toast.success("Conta criada!", { id: toastId });
       navigate("/login", { state: { email } });
     } catch (err) {
       setIsSubmitting(false);
 
-      toast.error("Ops! Falha ao criar conta");
+      toast.error("Ops! Falha ao criar conta", { id: toastId });
 
       console.error(err);
     }

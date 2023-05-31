@@ -3,12 +3,8 @@ import React, { useState } from "react";
 import { useQuery } from "react-query";
 import { useParams } from "react-router-dom";
 import AutomataBuilder from "../../components/Builder";
-import {
-  AutomataDescriptionSidebar
-} from "../../components/Builder/AutomataDescriptionSidebar";
-import {
-  SubmissionResultModal
-} from "../../components/Exercises/SubmissionResultModal";
+import { AutomataDescriptionSidebar } from "../../components/Builder/AutomataDescriptionSidebar";
+import { SubmissionResultModal } from "../../components/Exercises/SubmissionResultModal";
 import { SubmissionStatus } from "../../enums/ExerciseSubmission";
 import { TestsService } from "../../service/tests.service";
 import "./index.css";
@@ -24,8 +20,6 @@ const ExercisePage = () => {
 
   // For MVP propuses, we're going to take exercises as single automatas
   const automataData = !isLoading ? data.automatas?.[0] : undefined;
-
-  console.log(data);
 
   async function handleSubmitTestAnswer() {
     setSubmissionStatus(SubmissionStatus.loading);

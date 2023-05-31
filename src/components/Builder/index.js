@@ -3,6 +3,7 @@ import { Tabs } from "flowbite-react";
 import React, { useEffect } from "react";
 import { DFA } from "../../models/DFA";
 import { AutomataUtilitiesSidebar } from "./UtilitiesSidebar";
+import { baseAutomataData } from "./data";
 
 const EDGE_STROKE_COLOR = "#ffb203";
 
@@ -349,14 +350,14 @@ export default function AutomataBuilder({
       rebalanceGraph();
     });
 
-    // graphInstance.data({
-    //   nodes: baseAutomataData.nodes,
-    //   edges: baseAutomataData.edges.map((edge) => ({
-    //     ...edge,
-    //     type:
-    //       edge.source === edge.target ? "loop" : "actiavableEdge" || edge.type,
-    //   })),
-    // });
+    graphInstance.data({
+      nodes: baseAutomataData.nodes,
+      edges: baseAutomataData.edges.map((edge) => ({
+        ...edge,
+        type:
+          edge.source === edge.target ? "loop" : "actiavableEdge" || edge.type,
+      })),
+    });
 
     graphInstance.render();
 

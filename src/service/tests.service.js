@@ -1,8 +1,13 @@
 import { api } from "./api";
 
 export class TestsService {
-  static async fetchTests({ solved, authored }) {
-    return (await api.get("/tests", { params: { solved, authored } })).data;
+  static async fetchTests({ solved, authored, pageSize, page }) {
+    return (
+      await api.get("/tests", {
+        params: { solved, authored },
+        headers: { "content-range": `${(page) * pageSize}-${pageSize}` },
+      })
+    ).data;
   }
 
   static async fetchTestById({ exerciseId }) {

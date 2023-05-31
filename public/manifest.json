@@ -1,6 +1,6 @@
 {
-  "short_name": "Automatah",
-  "name": "Visual automata builder",
+  "short_name": "FAVA",
+  "name": "Finite Automata Validation App",
   "icons": [
     {
       "src": "favicon.ico",
