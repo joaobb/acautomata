@@ -1,5 +1,6 @@
 import { Button, Tabs } from "flowbite-react";
 import React, { useState } from "react";
+import toast from "react-hot-toast";
 import { useQuery } from "react-query";
 import { useParams } from "react-router-dom";
 import AutomataBuilder from "../../components/Builder";
@@ -8,6 +9,7 @@ import { SubmissionResultModal } from "../../components/Exercises/SubmissionResu
 import { SubmissionStatus } from "../../enums/ExerciseSubmission";
 import { TestsService } from "../../service/tests.service";
 import "./index.css";
+import { AntvG6Utils } from "../../utilts/AntvG6";
 
 const ExercisePage = () => {
   const { exerciseId } = useParams();
@@ -22,15 +24,22 @@ const ExercisePage = () => {
   const automataData = !isLoading ? data.automatas?.[0] : undefined;
 
   async function handleSubmitTestAnswer() {
-    setSubmissionStatus(SubmissionStatus.loading);
-    const response = await TestsService.submitAnswer({
-      exerciseId,
-      answer: { [automataData.id]: {} },
-    });
-    const feedback = response.feedback[automataData.id];
+    try {
+      setSubmissionStatus(SubmissionStatus.loading);
 
-    if (feedback) setSubmissionStatus(SubmissionStatus.correct);
-    else setSubmissionStatus(SubmissionStatus.incorrect);
+      const automata = AntvG6Utils.parseSave(graph.save());
+      const response = await TestsService.submitAnswer({
+        exerciseId,
+        answer: { [automataData.id]: automata },
+      });
+      const feedback = response.feedback[automataData.id];
+
+      if (feedback) setSubmissionStatus(SubmissionStatus.correct);
+      else setSubmissionStatus(SubmissionStatus.incorrect);
+    } catch (error) {
+      setSubmissionStatus(null);
+      toast.error("Ops! Ocorreu um erro ao submeter exercício!");
+    }
   }
 
   function clearAutomata() {
