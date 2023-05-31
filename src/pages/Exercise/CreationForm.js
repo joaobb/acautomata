@@ -17,6 +17,9 @@ const ExerciseFormPage = () => {
   const [description, setDescription] = useState("");
 
   async function handleSubmitCreateExercise() {
+    if (!title) return toast.error("Insira um nome pro exercício");
+    if (!description) return toast.error("Insira uma descrição pro autômato");
+
     const toastId = toast.loading("Criando exercício...");
     try {
       const automata = AntvG6Utils.parseSave(graph.save());
