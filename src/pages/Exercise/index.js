@@ -16,9 +16,10 @@ const ExercisePage = () => {
   const [graph, setGraph] = useState({});
   const [submissionStatus, setSubmissionStatus] = useState(null);
 
-  const { data, isLoading } = useQuery(["exercise", exerciseId], () =>
-    TestsService.fetchTestById({ exerciseId })
-  );
+  const { data, isLoading } = useQuery(["exercise", exerciseId], {
+    queryFn: () => TestsService.fetchTestById({ exerciseId }),
+    refetchOnWindowFocus: false,
+  });
 
   // For MVP propuses, we're going to take exercises as single automatas
   const automataData = !isLoading ? data.automatas?.[0] : undefined;

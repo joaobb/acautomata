@@ -52,7 +52,6 @@ export default function AutomataTester({ graph }) {
   }[accepts];
 
   function handleResetAcceptance() {
-    console.log("AA");
     if (accepts !== null) {
       setAccepts(null);
     }

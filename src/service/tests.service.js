@@ -1,11 +1,18 @@
+import { PAGINATION_PAGE_SIZE } from "../enums/Pagination";
 import { api } from "./api";
 
 export class TestsService {
-  static async fetchTests({ solved, authored, name, pageSize, page }) {
+  static async fetchTests({
+    solved,
+    authored,
+    name,
+    pageSize = PAGINATION_PAGE_SIZE,
+    offset = 0,
+  }) {
     return (
       await api.get("/tests", {
-        params: { solved, authored, name },
-        headers: { "content-range": `${page * pageSize}-${pageSize}` },
+        params: { solved, authored, name: name || undefined },
+        headers: { "content-range": `${offset}-${pageSize}` },
       })
     ).data;
   }

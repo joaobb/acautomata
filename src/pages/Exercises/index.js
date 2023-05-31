@@ -1,11 +1,12 @@
 import { MagnifyingGlassIcon, PlusIcon } from "@heroicons/react/20/solid";
 import { Button, Table, TextInput } from "flowbite-react";
 import { useState } from "react";
-import { useQuery } from "react-query";
+import { useInfiniteQuery } from "react-query";
 import { Link, useSearchParams } from "react-router-dom";
 import { twMerge } from "tailwind-merge";
 import { BasePageContent } from "../../components/Base/PageContent";
 import { ExerciseRow } from "../../components/Exercises/Row";
+import { LoadingEllipsis } from "../../components/Loading/Ellipsis";
 import { PAGINATION_PAGE_SIZE } from "../../enums/Pagination";
 import { Roles, RolesId } from "../../enums/Roles";
 import { useAuth } from "../../hooks/useAuth";
@@ -13,7 +14,6 @@ import { TestsService } from "../../service/tests.service";
 import "./index.css";
 
 const ExercisesPage = () => {
-  const [page, setPage] = useState(0);
   const [nameFilter, setNameFilter] = useState("");
 
   const [searchParams] = useSearchParams();
@@ -30,30 +30,30 @@ const ExercisesPage = () => {
 
   const solved = filter.solved ? true : filter.unsolved ? false : undefined;
 
-  const { data, isLoading } = useQuery({
-    keepPreviousData: true,
+  const { data, isLoading, fetchNextPage, hasNextPage } = useInfiniteQuery({
     queryKey: [
       "exercises",
-      page,
       solved,
       filter.authored ? "authored" : null,
       nameFilter,
     ],
-    queryFn: () =>
+    queryFn: ({ pageParam }) =>
       TestsService.fetchTests({
         solved,
         authored: filter.authored || undefined,
-        pageSize: PAGINATION_PAGE_SIZE,
-        page,
+        offset: pageParam,
         name: nameFilter,
       }),
+    refetchOnWindowFocus: false,
+    getNextPageParam: (lastPage, pages) => {
+      if (pages.length * PAGINATION_PAGE_SIZE >= lastPage.totalItems)
+        return false;
+
+      return pages.length * PAGINATION_PAGE_SIZE;
+    },
   });
 
-  const tests = data?.tests || [];
-
-  function loadMore() {
-    setPage(page + 1);
-  }
+  const dataPages = data?.pages || [];
 
   const canCreateExercise = [
     RolesId[Roles.admin],
@@ -73,7 +73,7 @@ const ExercisesPage = () => {
             <div className={"flex"}>
               <Link to="/exercises">
                 <Button
-                  className="rounded-r-none"
+                  className="rounded-r-none min-h-full"
                   color={filter.all ? undefined : "dark"}
                 >
                   Todos
@@ -81,7 +81,7 @@ const ExercisesPage = () => {
               </Link>
               <Link to="/exercises?filter=unsolved">
                 <Button
-                  className="rounded-none"
+                  className="rounded-none min-h-full"
                   color={filter.unsolved ? undefined : "dark"}
                 >
                   Não resolvidos
@@ -90,7 +90,7 @@ const ExercisesPage = () => {
               <Link to="/exercises?filter=solved">
                 <Button
                   className={twMerge(
-                    ["rounded-none"],
+                    ["rounded-none  min-h-full"],
                     [!canCreateExercise ? "rounded-r-lg" : null]
                   )}
                   color={filter.solved ? undefined : "dark"}
@@ -101,7 +101,7 @@ const ExercisesPage = () => {
               {canCreateExercise ? (
                 <Link to="/exercises?filter=authored">
                   <Button
-                    className="rounded-l-none"
+                    className="rounded-l-none  min-h-full"
                     color={filter.authored ? undefined : "dark"}
                   >
                     Minhas criações
@@ -145,22 +145,43 @@ const ExercisesPage = () => {
               </Table.HeadCell>
             </Table.Head>
             <Table.Body className="divide-y">
-              {!isLoading
-                ? tests.map((test) => (
-                    <ExerciseRow
-                      key={test.id}
-                      testId={test.id}
-                      name={test.name}
-                      description={test.description}
-                      author={test.author}
-                      grade={test.grade}
-                    />
-                  ))
-                : null}
+              {!isLoading ? (
+                dataPages.length ? (
+                  dataPages.map((page) =>
+                    page.tests.map((test) => (
+                      <ExerciseRow
+                        key={test.id}
+                        testId={test.id}
+                        name={test.name}
+                        description={test.description}
+                        author={test.author}
+                        grade={test.grade}
+                      />
+                    ))
+                  )
+                ) : (
+                  <Table.Row className="bg-white dark:border-gray-700 dark:bg-gray-800">
+                    <Table.Cell colSpan={4} className={"text-center"}>
+                      Nenhum exercício encontrado
+                    </Table.Cell>
+                  </Table.Row>
+                )
+              ) : (
+                <Table.Row className="bg-white dark:border-gray-700 dark:bg-gray-800">
+                  <Table.Cell colSpan={4} className={"text-center"}>
+                    <LoadingEllipsis />
+                  </Table.Cell>
+                </Table.Row>
+              )}
             </Table.Body>
           </Table>
 
-          <Button color={"light"} className={"mx-auto"} onClick={loadMore}>
+          <Button
+            color={"light"}
+            className={"mx-auto"}
+            disabled={!hasNextPage}
+            onClick={fetchNextPage}
+          >
             Carregar mais exercícios
           </Button>
         </main>
