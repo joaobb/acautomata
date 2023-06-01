@@ -4,6 +4,7 @@ import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 import AutomataBuilder from "../../components/Builder";
 import { AutomataDescriptionForm } from "../../components/Builder/AutomataDescriptionSidebar/Form";
+import { ExercisePrivacy } from "../../enums/Exercise";
 import { AutomatasService } from "../../service/automatas.service";
 import { TestsService } from "../../service/tests.service";
 import { AntvG6Utils } from "../../utilts/AntvG6";
@@ -15,6 +16,8 @@ const ExerciseFormPage = () => {
 
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
+  const [privacy, setPrivacy] = useState(ExercisePrivacy.public);
+  const [classroomPrivate, setClassroomPrivate] = useState(0);
 
   async function handleSubmitCreateExercise() {
     if (!title) return toast.error("Insira um nome pro exercício");
@@ -23,8 +26,6 @@ const ExerciseFormPage = () => {
     const toastId = toast.loading("Criando exercício...");
     try {
       const automata = AntvG6Utils.parseSave(graph.save());
-
-      console.log(automata, title, description);
 
       const automataCreationResponse = await AutomatasService.createAutomata({
         title,
@@ -39,7 +40,11 @@ const ExerciseFormPage = () => {
         title,
         description,
         automatas: [automataCreationResponse.id],
-        privacy: "public",
+        privacy: classroomPrivate ? privacy : ExercisePrivacy.public,
+        classroomPrivate:
+          classroomPrivate && privacy === ExercisePrivacy.classroomPrivate
+            ? Number(classroomPrivate)
+            : undefined,
       });
 
       toast.success("Exercício criado!", { id: toastId, duration: 5000 });
@@ -97,8 +102,12 @@ const ExerciseFormPage = () => {
             <AutomataDescriptionForm
               title={title}
               description={description}
+              privacy={privacy}
+              classroomPrivate={classroomPrivate}
               onUpdateTitle={setTitle}
               onUpdateDescription={setDescription}
+              onUpdatePrivacy={setPrivacy}
+              onUpdateClassroomPrivate={setClassroomPrivate}
             />
           </Tabs.Item>
         </AutomataBuilder>

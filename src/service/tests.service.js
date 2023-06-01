@@ -5,13 +5,19 @@ export class TestsService {
   static async fetchTests({
     solved,
     authored,
+    classroom,
     name,
     pageSize = PAGINATION_PAGE_SIZE,
     offset = 0,
   }) {
     return (
       await api.get("/tests", {
-        params: { solved, authored, name: name || undefined },
+        params: {
+          solved,
+          authored: authored || undefined,
+          name: name || undefined,
+          classroom: classroom || undefined,
+        },
         headers: { "content-range": `${offset}-${pageSize}` },
       })
     ).data;
@@ -25,13 +31,20 @@ export class TestsService {
     return (await api.post(`/tests/${exerciseId}/answer`, { answer })).data;
   }
 
-  static async createExercise({ title, description, automatas, privacy }) {
+  static async createExercise({
+    title,
+    description,
+    automatas,
+    privacy,
+    classroomPrivate,
+  }) {
     return (
       await api.post(`/tests`, {
         name: title,
         description,
         automatas,
         privacy,
+        classroomPrivate,
       })
     ).data;
   }

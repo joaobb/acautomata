@@ -1,10 +1,16 @@
-import { Label, Textarea, TextInput } from "flowbite-react";
+import { Label, Select, Textarea, TextInput } from "flowbite-react";
+import { ExercisePrivacy } from "../../../enums/Exercise";
+import { ClassroomSelector } from "../../Exercises/ClassroomSelector";
 
 function AutomataDescriptionForm({
   title,
   description,
+  privacy,
+  classroomPrivate,
   onUpdateTitle,
   onUpdateDescription,
+  onUpdatePrivacy,
+  onUpdateClassroomPrivate,
 }) {
   return (
     <div className={"text-gray-100 flex flex-col gap-6 h-full"}>
@@ -38,7 +44,27 @@ function AutomataDescriptionForm({
 
       <div>
         <span className={"text-lg font-bold"}>Preferências</span>
-        <p>...</p>
+
+        <div>
+          <Label htmlFor={"privacy-selector"}>Privacidade</Label>
+          <Select
+            value={privacy}
+            onChange={(ev) => onUpdatePrivacy(ev.target.value)}
+          >
+            <option value={ExercisePrivacy.public}>Público</option>
+            <option value={ExercisePrivacy.classroomPrivate}>
+              Privado para turma
+            </option>
+          </Select>
+
+          {privacy === ExercisePrivacy.classroomPrivate ? (
+            <ClassroomSelector
+              mentoredOnly
+              classroom={classroomPrivate}
+              onSelectClassroom={(ev) => onUpdateClassroomPrivate(ev)}
+            />
+          ) : null}
+        </div>
       </div>
     </div>
   );

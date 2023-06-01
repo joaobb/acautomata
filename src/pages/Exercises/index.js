@@ -1,10 +1,12 @@
 import { MagnifyingGlassIcon, PlusIcon } from "@heroicons/react/20/solid";
-import { Button, Table, TextInput } from "flowbite-react";
+import { Button, Select, Table, TextInput } from "flowbite-react";
 import { useState } from "react";
 import { useInfiniteQuery } from "react-query";
 import { Link, useSearchParams } from "react-router-dom";
 import { twMerge } from "tailwind-merge";
 import { BasePageContent } from "../../components/Base/PageContent";
+import { ExercisesClassroomFilter } from "../../components/Exercises/ClassrooomFilter";
+import { ExercisesNavList } from "../../components/Exercises/NavList";
 import { ExerciseRow } from "../../components/Exercises/Row";
 import { LoadingEllipsis } from "../../components/Loading/Ellipsis";
 import { SearchBar } from "../../components/SearchBar";
@@ -16,6 +18,7 @@ import "./index.css";
 
 const ExercisesPage = () => {
   const [nameFilter, setNameFilter] = useState("");
+  const [classroomFilter, setClassroomFilter] = useState(null);
 
   const [searchParams] = useSearchParams();
   const filterQuery = searchParams.get("filter");
@@ -37,13 +40,15 @@ const ExercisesPage = () => {
       solved,
       filter.authored ? "authored" : null,
       nameFilter,
+      classroomFilter,
     ],
     queryFn: ({ pageParam }) =>
       TestsService.fetchTests({
         solved,
-        authored: filter.authored || undefined,
+        authored: filter.authored,
         offset: pageParam,
         name: nameFilter,
+        classroom: Number(classroomFilter),
       }),
     refetchOnWindowFocus: false,
     getNextPageParam: (lastPage, pages) => {
@@ -71,45 +76,11 @@ const ExercisesPage = () => {
       <BasePageContent>
         <main className="flex flex-col gap-6 p-6 bg-gray-400 rounded-lg">
           <header className={"flex gap-4"}>
-            <div className={"flex"}>
-              <Link to="/exercises">
-                <Button
-                  className="rounded-r-none min-h-full"
-                  color={filter.all ? undefined : "dark"}
-                >
-                  Todos
-                </Button>
-              </Link>
-              <Link to="/exercises?filter=unsolved">
-                <Button
-                  className="rounded-none min-h-full"
-                  color={filter.unsolved ? undefined : "dark"}
-                >
-                  Não resolvidos
-                </Button>
-              </Link>
-              <Link to="/exercises?filter=solved">
-                <Button
-                  className={twMerge(
-                    ["rounded-none  min-h-full"],
-                    [!canCreateExercise ? "rounded-r-lg" : null]
-                  )}
-                  color={filter.solved ? undefined : "dark"}
-                >
-                  Resolvidos
-                </Button>
-              </Link>
-              {canCreateExercise ? (
-                <Link to="/exercises?filter=authored">
-                  <Button
-                    className="rounded-l-none  min-h-full"
-                    color={filter.authored ? undefined : "dark"}
-                  >
-                    Minhas criações
-                  </Button>
-                </Link>
-              ) : null}
-            </div>
+            <ExercisesNavList
+              filters={filter}
+              canCreateExercise={canCreateExercise}
+            />
+
             {canCreateExercise ? (
               <Link to={"/exercises/new"}>
                 <Button pill={true} color={"light"} className={"font-bold"}>
@@ -121,7 +92,13 @@ const ExercisesPage = () => {
               </Link>
             ) : null}
 
-            <SearchBar onSearch={setNameFilter} />
+            <div className={"flex gap-4 ml-auto"}>
+              <ExercisesClassroomFilter
+                className={"ml-auto"}
+                onSelectClassroom={setClassroomFilter}
+              />
+              <SearchBar onSearch={setNameFilter} />
+            </div>
           </header>
 
           <Table hoverable={true}>

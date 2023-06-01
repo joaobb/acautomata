@@ -8,7 +8,7 @@ function SearchBar({ onSearch }) {
     onSearch(ev.target.elements?.searchQuery?.value);
   }
   return (
-    <form className={"flex ml-auto"} onSubmit={handleSubmit}>
+    <form className={"flex"} onSubmit={handleSubmit}>
       <TextInput
         id="search"
         type="search"

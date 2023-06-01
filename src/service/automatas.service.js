@@ -1,13 +1,13 @@
 import { api } from "./api";
 
 export class AutomatasService {
-  static async createAutomata({ title, description, privacy, automata }) {
+  static async createAutomata({ title, description, automata, privacy }) {
     return (
       await api.post("/automatas", {
         name: title,
         description,
-        privacy,
         automata,
+        privacy,
       })
     ).data;
   }

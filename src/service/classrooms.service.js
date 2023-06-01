@@ -1,8 +1,8 @@
 import { api } from "./api";
 
 export class ClassroomsService {
-  static async fetchClasses({ mentored, name }) {
-    return (await api.get("/classrooms", { params: { mentored, name } })).data;
+  static async fetchClasses({ mentoredOnly, name } = {}) {
+    return (await api.get("/classrooms", { params: { mentoredOnly, name } })).data;
   }
 
   static async createClass({ name, description }) {

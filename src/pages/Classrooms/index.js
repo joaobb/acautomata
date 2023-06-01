@@ -29,16 +29,20 @@ const ClassroomsPage = () => {
 
   const filter = {
     all: !filterQuery,
-    mentored: filterQuery === "mentored" || undefined,
+    mentoredOnly: filterQuery === "mentoredOnly" || undefined,
   };
 
   const { data, isLoading, refetch } = useQuery({
     keepPreviousData: true,
-    queryKey: ["classrooms", filter.mentored ? "mentored" : null, nameFilter],
+    queryKey: [
+      "classrooms",
+      filter.mentoredOnly ? "mentoredOnly" : null,
+      nameFilter,
+    ],
     queryFn: () =>
       ClassroomsService.fetchClasses({
-        mentored: filter.mentored,
-        name: nameFilter,
+        mentoredOnly: filter.mentoredOnly,
+        name: nameFilter || undefined,
       }),
   });
 
@@ -49,7 +53,7 @@ const ClassroomsPage = () => {
     RolesId[Roles.teacher],
   ].includes(auth.user.role);
 
-  const showMentorDataOptions = filter.mentored && canCreateClass;
+  const showMentorDataOptions = filter.mentoredOnly && canCreateClass;
 
   return (
     <div className="classrooms__container py-6 bg-gray-600 flex-grow">
@@ -68,10 +72,10 @@ const ClassroomsPage = () => {
                     </Button>
                   </Link>
 
-                  <Link to="/classrooms?filter=mentored">
+                  <Link to="/classrooms?filter=mentoredOnly">
                     <Button
                       className="rounded-l-none"
-                      color={filter.mentored ? undefined : "dark"}
+                      color={filter.mentoredOnly ? undefined : "dark"}
                     >
                       Criadas
                     </Button>
