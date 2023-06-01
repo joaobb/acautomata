@@ -17,7 +17,7 @@ export const AuthProvider = ({ children }) => {
         password: data.password,
       });
 
-      localStorage.setItem("access_token", response.access_token);
+      localStorage.setItem("access_token", response.accessToken);
       setUser({ ...data, role: response.role });
       navigate("/exercises");
     } catch (error) {

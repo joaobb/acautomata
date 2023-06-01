@@ -7,6 +7,7 @@ import { twMerge } from "tailwind-merge";
 import { BasePageContent } from "../../components/Base/PageContent";
 import { ExerciseRow } from "../../components/Exercises/Row";
 import { LoadingEllipsis } from "../../components/Loading/Ellipsis";
+import { SearchBar } from "../../components/SearchBar";
 import { PAGINATION_PAGE_SIZE } from "../../enums/Pagination";
 import { Roles, RolesId } from "../../enums/Roles";
 import { useAuth } from "../../hooks/useAuth";
@@ -120,19 +121,7 @@ const ExercisesPage = () => {
               </Link>
             ) : null}
 
-            <form className={"flex ml-auto"} onSubmit={onFilterByName}>
-              <TextInput
-                id="search"
-                type="search"
-                name={"searchQuery"}
-                placeholder="Buscar"
-              />
-              <Button color="dark" type={"submit"}>
-                <MagnifyingGlassIcon
-                  className={"w-5 h-5 inline text-gray-100"}
-                />
-              </Button>
-            </form>
+            <SearchBar onSearch={setNameFilter} />
           </header>
 
           <Table hoverable={true}>

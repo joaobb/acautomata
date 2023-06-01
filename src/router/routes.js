@@ -1,6 +1,7 @@
-import { Roles } from '../enums/Roles';
-import ExerciseFormPage from "../pages/Exercise/CreationForm";
+import { Roles } from "../enums/Roles";
+import ClassroomsPage from "../pages/Classrooms";
 import ExercisePage from "../pages/Exercise";
+import ExerciseFormPage from "../pages/Exercise/CreationForm";
 import ExercisesPage from "../pages/Exercises";
 import LoginPage from "../pages/Login";
 import RegisterPage from "../pages/Register";
@@ -33,6 +34,11 @@ const routes = [
   {
     path: "/exercises/:exerciseId",
     element: <ExercisePage />,
+    auth: true,
+  },
+  {
+    path: "/classrooms",
+    element: <ClassroomsPage />,
     auth: true,
   },
 ];

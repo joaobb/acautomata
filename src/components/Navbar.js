@@ -10,6 +10,7 @@ import BaseLogo from "./Base/Logo";
 const navigation = [
   { name: "Sandbox", href: "/", current: true },
   { name: "Exercícios", href: "/exercises", current: false },
+  { name: "Turmas", href: "/classrooms", current: false },
 ];
 
 function classNames(...classes) {
