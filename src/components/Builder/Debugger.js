@@ -21,46 +21,56 @@ function AutomataDebugger({ graph }) {
 
   function handleDebug(ev) {
     ev.preventDefault();
+    try {
+      const { testWord } = Object.fromEntries(new FormData(ev.target));
 
-    const { testWord } = Object.fromEntries(new FormData(ev.target));
+      if (typeof testWord !== "string") return;
 
-    if (typeof testWord !== "string") return;
+      const graphPayload = graph.save();
 
-    const parsedAutomata = parseGraphToAutomata(graph.save());
-
-    const automata = new Automata(
-      parsedAutomata.states,
-      parsedAutomata.alphabet,
-      parsedAutomata.transitions,
-      parsedAutomata.initialState,
-      parsedAutomata.acceptanceStates
-    );
-
-    const wordTest = automata.testWord(testWord);
-
-    const parsedPath = wordTest.path.reduce((result, step, index) => {
-      const stepTransitions = step
-        .map((transition) => transition.id)
-        .filter(Boolean);
-
-      if (stepTransitions.filter(Boolean).length) {
-        result.push({
-          key: !index ? LAMBDA_TRANSITION_LABEL : testWord[index - 1],
-          transitions: stepTransitions,
-        });
+      if (!graphPayload.edges.length) {
+        toast.error("Ops!\nAcho que você esqueceu de construir o autômato");
+        throw new Error("Automata wasn't defined correctly");
       }
-      return result;
-    }, []);
 
-    setWordTestResult({ accepts: wordTest.accepts, path: parsedPath });
+      const parsedAutomata = parseGraphToAutomata(graphPayload);
 
-    setWord(testWord);
+      const automata = new Automata(
+        parsedAutomata.states,
+        parsedAutomata.alphabet,
+        parsedAutomata.transitions,
+        parsedAutomata.initialState,
+        parsedAutomata.acceptanceStates
+      );
 
-    parsedPath[0]?.transitions.forEach((transition) =>
-      graph.setItemState(transition, "active", true)
-    );
+      const wordTest = automata.testWord(testWord);
 
-    setDebugMode(true);
+      const parsedPath = wordTest.path.reduce((result, step, index) => {
+        const stepTransitions = step
+          .map((transition) => transition.id)
+          .filter(Boolean);
+
+        if (stepTransitions.filter(Boolean).length) {
+          result.push({
+            key: !index ? LAMBDA_TRANSITION_LABEL : testWord[index - 1],
+            transitions: stepTransitions,
+          });
+        }
+        return result;
+      }, []);
+
+      setWordTestResult({ accepts: wordTest.accepts, path: parsedPath });
+
+      setWord(testWord);
+
+      parsedPath[0]?.transitions.forEach((transition) =>
+        graph.setItemState(transition, "active", true)
+      );
+
+      setDebugMode(true);
+    } catch (error) {
+      console.error(error);
+    }
   }
 
   function clearDebugger() {
