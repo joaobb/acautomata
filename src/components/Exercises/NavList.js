@@ -1,11 +1,21 @@
 import { Button } from "flowbite-react";
 import { Link } from "react-router-dom";
 import { twMerge } from "tailwind-merge";
+import { useSearchParamsFormatter } from "../../hooks/useSearchParamsFormatter";
 
 function ExercisesNavList({ filters, canCreateExercise }) {
+  const [formatSearchParams] = useSearchParamsFormatter();
+  function formatFilterSearchParams(key, value) {
+    return formatSearchParams(key, value, ["classroom"]);
+  }
   return (
     <div className={"flex"}>
-      <Link to="/exercises">
+      <Link
+        to={{
+          pathname: "/exercises",
+          search: formatFilterSearchParams("filter", undefined),
+        }}
+      >
         <Button
           className="rounded-r-none min-h-full"
           color={filters.all ? undefined : "dark"}
@@ -13,7 +23,12 @@ function ExercisesNavList({ filters, canCreateExercise }) {
           Todos
         </Button>
       </Link>
-      <Link to="/exercises?filter=unsolved">
+      <Link
+        to={{
+          pathname: "/exercises",
+          search: formatFilterSearchParams("filter", "unsolved"),
+        }}
+      >
         <Button
           className="rounded-none min-h-full"
           color={filters.unsolved ? undefined : "dark"}
@@ -21,7 +36,12 @@ function ExercisesNavList({ filters, canCreateExercise }) {
           Não resolvidos
         </Button>
       </Link>
-      <Link to="/exercises?filter=solved">
+      <Link
+        to={{
+          pathname: "/exercises",
+          search: formatFilterSearchParams("filter", "solved"),
+        }}
+      >
         <Button
           className={twMerge(
             ["rounded-none  min-h-full"],
@@ -33,7 +53,12 @@ function ExercisesNavList({ filters, canCreateExercise }) {
         </Button>
       </Link>
       {canCreateExercise ? (
-        <Link to="/exercises?filter=authored">
+        <Link
+          to={{
+            pathname: "/exercises",
+            search: formatFilterSearchParams("filter", "authored"),
+          }}
+        >
           <Button
             className="rounded-l-none  min-h-full"
             color={filters.authored ? undefined : "dark"}
