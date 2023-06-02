@@ -25,7 +25,6 @@ const ClassroomsPage = () => {
   const filterQuery = searchParams.get("filter");
 
   const auth = useAuth();
-  const userId = auth.user.id;
 
   const filter = {
     all: !filterQuery,
@@ -96,7 +95,6 @@ const ClassroomsPage = () => {
                 Criar turma
               </Button>
             ) : null}
-
             <Button
               pill={true}
               color={"light"}
@@ -108,8 +106,9 @@ const ClassroomsPage = () => {
               />
               Entrar em turma
             </Button>
-
-            <SearchBar onSearch={setNameFilter} />
+            <div className={"ml-auto"}>
+              <SearchBar onSearch={setNameFilter} />
+            </div>
           </header>
 
           <Table hoverable={true}>

@@ -9,7 +9,7 @@ export const ClassRow = ({ isMentor, id, name, mentor, invitationToken }) => {
       </Table.Cell>
       <Table.Cell>{mentor || "-"}</Table.Cell>
       <Table.Cell>
-        <Link to={`/exercises?class=${id}`}>
+        <Link to={{ pathname: "/exercises", search: `classroom=${id}` }}>
           <Button color={"light"} className={"mx-auto"}>
             Ver exercícios
           </Button>
@@ -25,9 +25,11 @@ export const ClassRow = ({ isMentor, id, name, mentor, invitationToken }) => {
             </div>
           </Table.Cell>
           <Table.Cell className={"text-center"}>
-            <Button color={"light"} className={"mx-auto"}>
-              Ver submissões
-            </Button>
+            <Link to={`/classrooms/${id}/exercises`}>
+              <Button color={"light"} className={"mx-auto"}>
+                Ver submissões
+              </Button>
+            </Link>
           </Table.Cell>
         </>
       ) : null}

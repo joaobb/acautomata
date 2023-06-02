@@ -48,4 +48,16 @@ export class TestsService {
       })
     ).data;
   }
+
+  static async fetchTestSubmissions({
+    exerciseId,
+    pageSize = PAGINATION_PAGE_SIZE,
+    offset = 0,
+  }) {
+    return (
+      await api.get(`/tests/${exerciseId}/submissions`, {
+        headers: { "content-range": `${offset}-${pageSize}` },
+      })
+    ).data;
+  }
 }

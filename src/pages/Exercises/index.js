@@ -1,9 +1,8 @@
-import { MagnifyingGlassIcon, PlusIcon } from "@heroicons/react/20/solid";
-import { Button, Select, Table, TextInput } from "flowbite-react";
+import { PlusIcon } from "@heroicons/react/20/solid";
+import { Button, Table } from "flowbite-react";
 import { useState } from "react";
 import { useInfiniteQuery } from "react-query";
 import { Link, useSearchParams } from "react-router-dom";
-import { twMerge } from "tailwind-merge";
 import { BasePageContent } from "../../components/Base/PageContent";
 import { ExercisesClassroomFilter } from "../../components/Exercises/ClassrooomFilter";
 import { ExercisesNavList } from "../../components/Exercises/NavList";
@@ -66,11 +65,6 @@ const ExercisesPage = () => {
     RolesId[Roles.teacher],
   ].includes(auth.user.role);
 
-  function onFilterByName(ev) {
-    ev.preventDefault();
-    setNameFilter(ev.target.elements?.searchQuery?.value);
-  }
-
   return (
     <div className="exercises__container py-6 bg-gray-600 flex-grow">
       <BasePageContent>
@@ -120,7 +114,7 @@ const ExercisesPage = () => {
                         testId={test.id}
                         name={test.name}
                         description={test.description}
-                        author={test.author}
+                        author={test.authorName}
                         grade={test.grade}
                       />
                     ))
