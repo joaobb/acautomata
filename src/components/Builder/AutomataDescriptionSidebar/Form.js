@@ -59,6 +59,7 @@ function AutomataDescriptionForm({
 
           {privacy === ExercisePrivacy.classroomPrivate ? (
             <ClassroomSelector
+              labeled
               mentoredOnly
               classroom={classroomPrivate}
               onSelectClassroom={(ev) => onUpdateClassroomPrivate(ev)}

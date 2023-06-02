@@ -3,12 +3,14 @@ import { useQuery } from "react-query";
 import { ClassroomsService } from "../../service/classrooms.service";
 
 function ClassroomSelector({
+  defaultPlaceholder = "Todas",
+  labeled,
   mentoredOnly,
   classroom,
   onSelectClassroom,
   ...props
 }) {
-  const { data, isLoading } = useQuery({
+  const { data } = useQuery({
     refetchOnWindowFocus: false,
     queryKey: ["classrooms", mentoredOnly ? "mentored" : undefined],
     queryFn: () =>
@@ -20,7 +22,8 @@ function ClassroomSelector({
   const classrooms = data?.classrooms || [];
 
   function handleChange(ev) {
-    onSelectClassroom(ev.target.value);
+    const classroomId = Number(ev.target.value);
+    onSelectClassroom(classroomId || null, classroomId);
   }
 
   return (
@@ -29,9 +32,14 @@ function ClassroomSelector({
       onClick={(ev) => ev.stopPropagation()}
       {...props}
     >
-      <Label htmlFor={"classrooms"}>Turma</Label>
-      <Select id="classrooms" value={classroom} onChange={handleChange}>
-        <option value={0}>Todas</option>
+      <Label
+        htmlFor={"classrooms"}
+        className={!labeled ? "sr-only" : undefined}
+      >
+        Turma
+      </Label>
+      <Select id="classrooms" value={classroom || 0} onChange={handleChange}>
+        <option value={0}>{defaultPlaceholder}</option>
 
         {classrooms?.map((classroom) => (
           <option key={classroom.id} value={classroom.id}>

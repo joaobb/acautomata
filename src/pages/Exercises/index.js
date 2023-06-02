@@ -2,9 +2,9 @@ import { PlusIcon } from "@heroicons/react/20/solid";
 import { Button, Table } from "flowbite-react";
 import { useState } from "react";
 import { useInfiniteQuery } from "react-query";
-import { Link, useSearchParams } from "react-router-dom";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { BasePageContent } from "../../components/Base/PageContent";
-import { ExercisesClassroomFilter } from "../../components/Exercises/ClassrooomFilter";
+import { ClassroomSelector } from "../../components/Exercises/ClassroomSelector";
 import { ExercisesNavList } from "../../components/Exercises/NavList";
 import { ExerciseRow } from "../../components/Exercises/Row";
 import { LoadingEllipsis } from "../../components/Loading/Ellipsis";
@@ -12,21 +12,26 @@ import { SearchBar } from "../../components/SearchBar";
 import { PAGINATION_PAGE_SIZE } from "../../enums/Pagination";
 import { Roles, RolesId } from "../../enums/Roles";
 import { useAuth } from "../../hooks/useAuth";
+import { useSearchParamsFormatter } from "../../hooks/useSearchParamsFormatter";
 import { TestsService } from "../../service/tests.service";
 import "./index.css";
 
 const ExercisesPage = () => {
+  const [formatSearchParams] = useSearchParamsFormatter();
+  const navigate = useNavigate();
+
   const [nameFilter, setNameFilter] = useState("");
-  const [classroomFilter, setClassroomFilter] = useState(null);
 
   const [searchParams] = useSearchParams();
   const filterQuery = searchParams.get("filter");
+  const classroomFilterQuery = searchParams.get("classroom");
 
   const filter = {
     all: !filterQuery,
     solved: filterQuery === "solved",
     unsolved: filterQuery === "unsolved",
     authored: filterQuery === "authored",
+    classroom: classroomFilterQuery ? Number(classroomFilterQuery) : undefined,
   };
 
   const auth = useAuth();
@@ -39,15 +44,15 @@ const ExercisesPage = () => {
       solved,
       filter.authored ? "authored" : null,
       nameFilter,
-      classroomFilter,
+      filter.classroom,
     ],
     queryFn: ({ pageParam }) =>
       TestsService.fetchTests({
         solved,
-        authored: filter.authored,
-        offset: pageParam,
         name: nameFilter,
-        classroom: Number(classroomFilter),
+        authored: filter.authored,
+        classroom: filter.classroom,
+        offset: pageParam,
       }),
     refetchOnWindowFocus: false,
     getNextPageParam: (lastPage, pages) => {
@@ -64,6 +69,14 @@ const ExercisesPage = () => {
     RolesId[Roles.admin],
     RolesId[Roles.teacher],
   ].includes(auth.user.role);
+
+  function handleSelectClassroomFilter(classroomId) {
+    navigate({
+      search: formatSearchParams("classroom", classroomId, ["filter"]),
+    });
+  }
+
+  const noItemsFound = !isLoading && !data.pages[0]?.totalItems;
 
   return (
     <div className="exercises__container py-6 bg-gray-600 flex-grow">
@@ -87,9 +100,13 @@ const ExercisesPage = () => {
             ) : null}
 
             <div className={"flex gap-4 ml-auto"}>
-              <ExercisesClassroomFilter
-                className={"ml-auto"}
-                onSelectClassroom={setClassroomFilter}
+              <ClassroomSelector
+                defaultPlaceholder={
+                  filter.classroom ? "Todas" : "Filtrar por turma"
+                }
+                classroom={filter.classroom}
+                onSelectClassroom={handleSelectClassroomFilter}
+                className={"w-64"}
               />
               <SearchBar onSearch={setNameFilter} />
             </div>
@@ -97,16 +114,17 @@ const ExercisesPage = () => {
 
           <Table hoverable={true}>
             <Table.Head>
+              <Table.HeadCell className={"w-0"}>ID</Table.HeadCell>
               <Table.HeadCell>Nome</Table.HeadCell>
               <Table.HeadCell>Autor</Table.HeadCell>
-              <Table.HeadCell className="sr-only"> </Table.HeadCell>
+              <Table.HeadCell className={"text-center"}>Status</Table.HeadCell>
               <Table.HeadCell>
                 <span className="sr-only">Edit</span>
               </Table.HeadCell>
             </Table.Head>
             <Table.Body className="divide-y">
               {!isLoading ? (
-                dataPages.length ? (
+                !noItemsFound ? (
                   dataPages.map((page) =>
                     page.tests.map((test) => (
                       <ExerciseRow
@@ -121,14 +139,14 @@ const ExercisesPage = () => {
                   )
                 ) : (
                   <Table.Row className="bg-white dark:border-gray-700 dark:bg-gray-800">
-                    <Table.Cell colSpan={4} className={"text-center"}>
+                    <Table.Cell colSpan={5} className={"text-center"}>
                       Nenhum exercício encontrado
                     </Table.Cell>
                   </Table.Row>
                 )
               ) : (
                 <Table.Row className="bg-white dark:border-gray-700 dark:bg-gray-800">
-                  <Table.Cell colSpan={4} className={"text-center"}>
+                  <Table.Cell colSpan={5} className={"text-center"}>
                     <LoadingEllipsis />
                   </Table.Cell>
                 </Table.Row>
