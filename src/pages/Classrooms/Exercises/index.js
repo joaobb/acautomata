@@ -18,7 +18,7 @@ const ClassroomExercisesPage = () => {
   const { classroomId } = useParams();
 
   const { data, isLoading, fetchNextPage, hasNextPage } = useInfiniteQuery({
-    queryKey: ["exercises", `classroom #${classroomId}`],
+    queryKey: ["exercises", `classroom #${classroomId}`, nameFilter],
     queryFn: ({ pageParam }) =>
       TestsService.fetchTests({
         classroom: Number(classroomId),
