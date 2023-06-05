@@ -10,7 +10,7 @@ import BaseLogo from "./Base/Logo";
 const navigation = [
   { name: "Sandbox", href: "/", current: true },
   { name: "Exercícios", href: "/exercises", current: false },
-  { name: "Turmas", href: "/classrooms", current: false },
+  { name: "Turmas", href: "/classrooms", current: false, auth: true },
 ];
 
 function classNames(...classes) {
@@ -49,23 +49,25 @@ const Navbar = () => {
                 </div>
                 <div className="hidden sm:ml-6 sm:block">
                   <div className="flex space-x-4">
-                    {navigation.map((item) => (
-                      <NavLink
-                        key={item.name}
-                        to={item.href}
-                        className={(navData) =>
-                          classNames(
-                            navData.isActive
-                              ? "bg-gray-900 text-white"
-                              : "text-gray-300 hover:bg-gray-700 hover:text-white",
-                            "px-3 py-2 rounded-md text-sm font-medium"
-                          )
-                        }
-                        end
-                      >
-                        {item.name}
-                      </NavLink>
-                    ))}
+                    {navigation.map((item) =>
+                      !item.auth || auth.user ? (
+                        <NavLink
+                          key={item.name}
+                          to={item.href}
+                          className={(navData) =>
+                            classNames(
+                              navData.isActive
+                                ? "bg-gray-900 text-white"
+                                : "text-gray-300 hover:bg-gray-700 hover:text-white",
+                              "px-3 py-2 rounded-md text-sm font-medium"
+                            )
+                          }
+                          end
+                        >
+                          {item.name}
+                        </NavLink>
+                      ) : null
+                    )}
                   </div>
                 </div>
               </div>
