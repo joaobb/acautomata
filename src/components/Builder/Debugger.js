@@ -11,9 +11,9 @@ function AutomataDebugger({ graph }) {
   const [wordTestResult, setWordTestResult] = useState({
     accepts: false,
     path: [],
+    keysSteps: [],
   });
 
-  const [word, setWord] = useState("");
   const [step, setStep] = useState(0);
 
   const [debugMode, setDebugMode] = useState(false);
@@ -32,39 +32,40 @@ function AutomataDebugger({ graph }) {
         throw new Error("Automata wasn't defined correctly");
       }
 
-      const parsedAutomata = parseGraphToAutomata(graphPayload);
+      const parsedPayload = parseGraphToAutomata(graphPayload);
 
       const automata = new Automata(
-        parsedAutomata.states,
-        parsedAutomata.alphabet,
-        parsedAutomata.transitions,
-        parsedAutomata.initialState,
-        parsedAutomata.acceptanceStates
+        parsedPayload.states,
+        parsedPayload.alphabet,
+        parsedPayload.transitions,
+        parsedPayload.initialState,
+        parsedPayload.acceptanceStates
       );
 
       const wordTest = automata.testWord(testWord);
+      // Remove initial state transition
+      const clearedPath = wordTest.path.reduce((path, step) => {
+        const clearedStep = {
+          key: step.key,
+          transitions: step.transitions.filter((transition) => transition.id),
+        };
 
-      const parsedPath = wordTest.path.reduce((result, step, index) => {
-        const stepTransitions = step
-          .map((transition) => transition.id)
-          .filter(Boolean);
+        if (clearedStep.transitions.length) path.push(clearedStep);
 
-        if (stepTransitions.filter(Boolean).length) {
-          result.push({
-            key: !index ? LAMBDA_TRANSITION_LABEL : testWord[index - 1],
-            transitions: stepTransitions,
-          });
-        }
-        return result;
+        return path;
       }, []);
 
-      setWordTestResult({ accepts: wordTest.accepts, path: parsedPath });
-
-      setWord(testWord);
-
-      parsedPath[0]?.transitions.forEach((transition) =>
-        graph.setItemState(transition, "active", true)
+      const keysSteps = clearedPath.map((step) =>
+        step.key === LAMBDA_TRANSITION_LABEL ? "_" : step.key
       );
+
+      setWordTestResult({
+        accepts: wordTest.accepts,
+        path: clearedPath,
+        keysSteps: keysSteps,
+      });
+
+      toggleActiveState(0, true, clearedPath);
 
       setDebugMode(true);
     } catch (error) {
@@ -77,25 +78,27 @@ function AutomataDebugger({ graph }) {
     graph.save()?.edges.forEach((edge) => {
       graph.setItemState(edge.id, "active", false);
     });
-    setWord("");
     setStep(0);
-    setWordTestResult({ accepts: false, path: [] });
+    setWordTestResult({ accepts: false, path: [], keysSteps: [] });
   }
 
-  function toggleActiveState(step, value) {
-    wordTestResult.path[step]?.transitions.forEach((transition) => {
-      if (transition) graph.setItemState(transition, "active", value);
+  function toggleActiveState(step, value, path = wordTestResult.path) {
+    path[step]?.transitions.forEach((transition) => {
+      console.log(transition);
+      if (transition?.id) graph.setItemState(transition.id, "active", value);
     });
   }
 
   function handleStep(diff) {
     toggleActiveState(step, false);
 
-    const nextStep = Math.max(Math.min(step + diff, word.length - 1), 0);
+    const keysStepsCount = wordTestResult.keysSteps.length;
+
+    const nextStep = Math.max(Math.min(step + diff, keysStepsCount - 1), 0);
     setStep(nextStep);
     toggleActiveState(nextStep, true);
 
-    if (nextStep === word.length - 1) {
+    if (nextStep === keysStepsCount - 1) {
       if (wordTestResult.accepts)
         toast.success("O automato reconhece a palavra");
       else toast.error("O automato não reconhece a palavra");
@@ -103,7 +106,7 @@ function AutomataDebugger({ graph }) {
   }
 
   const isFirstStep = step === 0;
-  const isLastStep = step === word.length - 1;
+  const isLastStep = step === wordTestResult.keysSteps.length - 1;
 
   return (
     <div>
@@ -130,16 +133,16 @@ function AutomataDebugger({ graph }) {
           <div className={"flex flex-col"}>
             <div className={"flex bg-white rounded-t-lg"}>
               <p className="debug-word text-gray-800 px-4 py-2">
-                {word.split("").map((char, $index) => (
+                {wordTestResult.keysSteps.map((key, $index) => (
                   <span
-                    key={`test-word-char-#${$index}=${char}`}
+                    key={`test-word-char-#${$index}=${key}`}
                     className={
                       step === $index
                         ? "text-red-700 font-bold"
                         : "text-gray-800"
                     }
                   >
-                    {char}
+                    {key}
                   </span>
                 ))}
               </p>
