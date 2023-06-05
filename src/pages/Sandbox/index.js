@@ -9,6 +9,7 @@ const SandboxPage = () => {
     <div className="sandbox__container bg-gray-600">
       <div className={"py-6 px-10 rounded-lg"}>
         <AutomataBuilder
+          addPlaceholder
           heightOffset={0}
           graph={graph}
           onUpdateGraph={setGraph}

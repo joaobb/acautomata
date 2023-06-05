@@ -259,6 +259,7 @@ G6.registerEdge(
 );
 
 export default function AutomataBuilder({
+  addPlaceholder = false,
   graph,
   heightOffset,
   hasHeader,
@@ -350,14 +351,18 @@ export default function AutomataBuilder({
       rebalanceGraph();
     });
 
-    graphInstance.data({
-      nodes: baseAutomataData.nodes,
-      edges: baseAutomataData.edges.map((edge) => ({
-        ...edge,
-        type:
-          edge.source === edge.target ? "loop" : "actiavableEdge" || edge.type,
-      })),
-    });
+    if (addPlaceholder) {
+      graphInstance.data({
+        nodes: baseAutomataData.nodes,
+        edges: baseAutomataData.edges.map((edge) => ({
+          ...edge,
+          type:
+            edge.source === edge.target
+              ? "loop"
+              : "actiavableEdge" || edge.type,
+        })),
+      });
+    }
 
     graphInstance.render();
 
