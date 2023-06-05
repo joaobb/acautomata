@@ -3,8 +3,7 @@ import PlayIcon from "@heroicons/react/24/outline/PlayIcon";
 import React, { useState } from "react";
 import toast from "react-hot-toast";
 import { LAMBDA_TRANSITION_LABEL } from "../../enums/Automata";
-import BaseInput from "../Base/Input";
-import { Button } from "flowbite-react";
+import { Button, TextInput } from "flowbite-react";
 
 import { Automata, parseGraphToAutomata } from "automata-logics-v2";
 
@@ -115,7 +114,8 @@ function AutomataDebugger({ graph }) {
             onSubmit={(ev) => handleDebug(ev)}
             className="flex gap-2 debug-form"
           >
-            <BaseInput
+            <TextInput
+              className={"w-full"}
               type="text"
               name="testWord"
               placeholder="Palavra"

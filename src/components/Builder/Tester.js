@@ -4,14 +4,11 @@ import {
   PlayIcon,
   XMarkIcon,
 } from "@heroicons/react/24/outline";
-import { type } from "@testing-library/user-event/dist/type";
-import { Button } from "flowbite-react";
-import React, { useState } from "react";
-import toast from "react-hot-toast";
-import { DFA } from "../../models/DFA";
-import BaseInput from "../Base/Input";
 
 import { Automata, parseGraphToAutomata } from "automata-logics-v2";
+import { Button, TextInput } from "flowbite-react";
+import React, { useState } from "react";
+import toast from "react-hot-toast";
 
 export default function AutomataTester({ graph }) {
   const [accepts, setAccepts] = useState(null);
@@ -61,7 +58,8 @@ export default function AutomataTester({ graph }) {
     <form onSubmit={testWord} className="test-form">
       <fieldset className={"flex gap-2"}>
         <legend className={"font-bold"}>Testar palavra</legend>
-        <BaseInput
+        <TextInput
+          className={"w-full"}
           type="text"
           name="testWord"
           placeholder="Palavra"

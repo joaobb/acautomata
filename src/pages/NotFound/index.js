@@ -1,4 +1,4 @@
-import BaseButton from "../../components/Base/Button";
+import { Button } from "flowbite-react";
 import { Link } from "react-router-dom";
 
 const NotFoundPage = () => {
@@ -22,13 +22,13 @@ const NotFoundPage = () => {
           </p>
         </div>
       </div>
-      <div>
-        <BaseButton as={Link} to={"/"} className={"mr-4"}>
-          Ir para sandbox
-        </BaseButton>
-        <BaseButton as={Link} to={"/exercises"}>
-          Ir para exercícios
-        </BaseButton>
+      <div className={"flex gap-4"}>
+        <Link to={"/"}>
+          <Button>Ir para sandbox</Button>
+        </Link>
+        <Link to={"/exercises"}>
+          <Button>Ir para exercícios</Button>
+        </Link>
       </div>
     </div>
   );

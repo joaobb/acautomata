@@ -1,9 +1,8 @@
-import { Button, Label } from "flowbite-react";
+import { Button, Label, TextInput } from "flowbite-react";
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { useLocation, useNavigate } from "react-router-dom";
 import { twMerge } from "tailwind-merge";
-import BaseInput from "../../components/Base/Input";
 import BaseLogo from "../../components/Base/Logo";
 import { useAuth } from "../../hooks/useAuth";
 
@@ -61,7 +60,7 @@ function LoginPage() {
                 Email
               </Label>
 
-              <BaseInput
+              <TextInput
                 defaultValue={registeredEmail}
                 id="email-address"
                 name="email"
@@ -76,13 +75,12 @@ function LoginPage() {
               <Label htmlFor="password" className="sr-only">
                 Senha
               </Label>
-              <BaseInput
+              <TextInput
                 id="password"
                 name="password"
                 type="password"
                 autoComplete="current-password"
                 required
-                className="relative block w-full appearance-none rounded-none rounded-b-md border border-gray-300 px-3 py-2 text-gray-900 placeholder-gray-500 focus:z-10 focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm"
                 placeholder="Senha"
               />
             </div>

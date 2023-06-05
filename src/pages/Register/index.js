@@ -1,9 +1,8 @@
-import { Button, Checkbox, Label } from "flowbite-react";
+import { Button, Checkbox, Label, TextInput } from "flowbite-react";
 import { useState } from "react";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 import { twMerge } from "tailwind-merge";
-import Input from "../../components/Base/Input";
 import BaseLogo from "../../components/Base/Logo";
 import { AuthService } from "../../service/auth.service";
 
@@ -68,7 +67,7 @@ function RegisterPage() {
               <Label htmlFor="userName" className="sr-only">
                 Nome
               </Label>
-              <Input
+              <TextInput
                 id="userName"
                 name="userName"
                 type="userName"
@@ -83,7 +82,7 @@ function RegisterPage() {
                 Email
               </Label>
 
-              <Input
+              <TextInput
                 id="email-address"
                 name="email"
                 type="email"
@@ -97,7 +96,7 @@ function RegisterPage() {
               <Label htmlFor="password" className="sr-only">
                 Senha
               </Label>
-              <Input
+              <TextInput
                 id="password"
                 name="password"
                 type="password"
