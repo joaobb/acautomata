@@ -1,7 +1,7 @@
 import { Toaster } from "react-hot-toast";
 import { QueryClient, QueryClientProvider } from "react-query";
 import Router from "./router";
-import "./styles.css";
+import "./globalStyles.css";
 
 const queryClient = new QueryClient();
 
