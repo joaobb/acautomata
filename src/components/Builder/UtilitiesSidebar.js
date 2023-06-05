@@ -1,7 +1,7 @@
 import { Button } from "flowbite-react";
 import React from "react";
-import { AntvG6Utils } from "../../utilts/AntvG6";
-import { loadGraph } from "../../utilts/loadGraph";
+import { AntvG6Utils } from "../../utils/AntvG6";
+import { loadGraph } from "../../utils/loadGraph";
 import AutomataDebugger from "./Debugger";
 import AutomataTester from "./Tester";
 

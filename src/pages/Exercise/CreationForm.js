@@ -7,7 +7,7 @@ import { AutomataDescriptionForm } from "../../components/Builder/AutomataDescri
 import { ExercisePrivacy } from "../../enums/Exercise";
 import { AutomatasService } from "../../service/automatas.service";
 import { TestsService } from "../../service/tests.service";
-import { AntvG6Utils } from "../../utilts/AntvG6";
+import { AntvG6Utils } from "../../utils/AntvG6";
 import "./index.css";
 
 const ExerciseFormPage = () => {

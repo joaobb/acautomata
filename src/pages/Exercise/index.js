@@ -9,7 +9,7 @@ import { SubmissionResultModal } from "../../components/Exercises/SubmissionResu
 import { SubmissionStatus } from "../../enums/ExerciseSubmission";
 import { TestsService } from "../../service/tests.service";
 import "./index.css";
-import { AntvG6Utils } from "../../utilts/AntvG6";
+import { AntvG6Utils } from "../../utils/AntvG6";
 
 const ExercisePage = () => {
   const { exerciseId } = useParams();
@@ -82,7 +82,7 @@ const ExercisePage = () => {
             <Tabs.Item title="Automato">
               <AutomataDescriptionSidebar
                 description={automataData?.description}
-                authorName={automataData?.id}
+                authorName={automataData?.authorName}
               />
             </Tabs.Item>
           ) : (

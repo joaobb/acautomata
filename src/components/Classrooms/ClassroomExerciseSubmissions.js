@@ -6,7 +6,7 @@ import {
 import { Table } from "flowbite-react";
 import { useQuery } from "react-query";
 import { TestsService } from "../../service/tests.service";
-import { formatDateTime } from "../../utilts/formatDate";
+import { formatDateTime } from "../../utils/formatDate";
 
 export const ClassroomExerciseSubmissions = ({
   exerciseId,
