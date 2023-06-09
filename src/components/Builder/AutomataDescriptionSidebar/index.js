@@ -3,7 +3,7 @@ function AutomataDescriptionSidebar({ description, authorName }) {
     <div className={"text-gray-100 flex flex-col gap-6 h-full"}>
       <div>
         <span className={"text-xl font-bold"}>Descrição</span>
-        <p>{description}</p>
+        <pre className={'text-sm whitespace-pre-wrap'}>{description}</pre>
       </div>
 
       <hr className={"mt-auto"} />
