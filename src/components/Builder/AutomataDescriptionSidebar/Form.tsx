@@ -3,7 +3,7 @@ import { ExercisePrivacy } from "../../../enums/Exercise";
 import { ClassroomSelector } from "../../Exercises/ClassroomSelector";
 import React from "react";
 
-interface AutomataDescriptionForm {
+interface AutomataDescriptionFormProps {
   title: string;
   description: string;
   privacy: string;
@@ -14,7 +14,7 @@ interface AutomataDescriptionForm {
   onUpdateClassroomPrivate(classroomPrivate: number | null): void;
 }
 
-const AutomataDescriptionForm: React.FC<AutomataDescriptionForm> = ({
+const AutomataDescriptionForm: React.FC<AutomataDescriptionFormProps> = ({
   title,
   description,
   privacy,
