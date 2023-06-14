@@ -1,7 +1,7 @@
 {
-  "name": "antv-g6",
-  "version": "0.1.0",
-  "private": true,
+  "name": "fava-frontend",
+  "version": "1.0.0",
+  "private": false,
   "dependencies": {
     "@antv/g6": "^4.7.4",
     "@headlessui/react": "^1.7.3",
