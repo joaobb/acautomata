@@ -3127,8 +3127,8 @@ at-least-node@^1.0.0:
   integrity sha512-+q/t7Ekv1EDY2l6Gda6LLiX14rU9TV20Wa3ofeQmwPFZbOMo9DXrLbOjFaaclkXKWidIaopwAObQDqwWtGUjqg==
 
 "automata-logics-v2@https://github.com/joaobb/fava-logics":
-  version "1.0.2"
-  resolved "https://github.com/joaobb/fava-logics#bf47d9401e3f6f51cde431794304776ae4542ae0"
+  version "1.0.3"
+  resolved "https://github.com/joaobb/fava-logics#d4f079e4375767fa1ca8031a2bd661e3a5b1a51f"
   dependencies:
     lodash.uniq "^4.5.0"
     lodash.uniqby "^4.7.0"
