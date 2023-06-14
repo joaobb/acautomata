@@ -16,7 +16,7 @@ const RequireAuth: React.FC<RequireAuthProps> = ({
   const location = useLocation();
   const navigate = useNavigate();
 
-  if (!auth?.user) {
+  if (!auth.user) {
     // Redirect them to the /login page, but save the current location they were
     // trying to go to when they were redirected. This allows us to send them
     // along to that page after they login, which is a nicer user experience
@@ -24,7 +24,7 @@ const RequireAuth: React.FC<RequireAuthProps> = ({
     return <Navigate to="/login" state={{ from: location }} replace />;
   }
 
-  if (Number(auth?.user?.role) > RolesId[roleLevel])
+  if (Number(auth.user?.role) > RolesId[roleLevel])
     navigate("/login", { replace: true });
   else return children;
 };

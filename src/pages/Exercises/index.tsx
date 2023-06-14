@@ -68,7 +68,7 @@ const ExercisesPage = () => {
   const canCreateExercise = [
     RolesId[Roles.admin],
     RolesId[Roles.teacher],
-  ].includes(Number(auth?.user?.role));
+  ].includes(Number(auth.user?.role));
 
   function handleSelectClassroomFilter(classroomId: number) {
     navigate({

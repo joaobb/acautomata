@@ -21,7 +21,7 @@ const Navbar = () => {
   const auth = useAuth();
 
   function signOut() {
-    auth?.logout();
+    auth.logout();
   }
 
   return (
@@ -49,7 +49,7 @@ const Navbar = () => {
                 <div className="hidden sm:ml-6 sm:block">
                   <div className="flex space-x-4">
                     {navigation.map((item) =>
-                      !item.auth || auth?.user ? (
+                      !item.auth || auth.user ? (
                         <NavLink
                           key={item.name}
                           to={item.href}
@@ -72,7 +72,7 @@ const Navbar = () => {
               </div>
               <div className="absolute inset-y-0 right-0 flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0">
                 {/* Profile dropdown */}
-                {auth?.user ? (
+                {auth.user ? (
                   <Menu as="div" className="relative ml-3">
                     <div>
                       <Menu.Button className="flex rounded-full bg-gray-800 text-sm focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800">

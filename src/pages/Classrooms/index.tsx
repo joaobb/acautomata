@@ -50,7 +50,7 @@ const ClassroomsPage = () => {
   const canCreateClass = [
     RolesId[Roles.admin],
     RolesId[Roles.teacher],
-  ].includes(Number(auth?.user.role));
+  ].includes(Number(auth.user.role));
 
   const showMentorDataOptions = Boolean(filter.mentoredOnly && canCreateClass);
 

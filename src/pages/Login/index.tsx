@@ -30,7 +30,7 @@ function LoginPage() {
       const email = String(formData.get("email"));
       const password = String(formData.get("password"));
 
-      await auth?.login({ email, password });
+      await auth.login({ email, password });
       toast.success("Bem vindo novamente!", { id: toastId });
       navigate(from, { replace: true });
     } catch (err) {

@@ -3,18 +3,16 @@ import { useNavigate } from "react-router-dom";
 import { AuthService } from "../service/auth.service";
 import { useLocalStorage } from "./useLocalStorage";
 import { User, UserCredentials } from "../interfaces/user";
-
-const AuthContext = createContext<AuthContext | null>(null);
-
-interface AuthProviderProps {
-  children?: React.ReactNode;
-}
-
-interface AuthContext {
+interface IAuthContext {
   user: Partial<User>;
   login(credentials: UserCredentials): Promise<void>;
   logout(): void;
 }
+interface AuthProviderProps {
+  children?: React.ReactNode;
+}
+
+const AuthContext = createContext<IAuthContext>({} as IAuthContext);
 
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [user, setUser] = useLocalStorage("user", null);
@@ -46,7 +44,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     navigate("/", { replace: true });
   };
 
-  const value: AuthContext = useMemo(
+  const value: IAuthContext = useMemo(
     () => ({
       user,
       login,
@@ -54,6 +52,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     }),
     [user]
   );
+
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };
 
